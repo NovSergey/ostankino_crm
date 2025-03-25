@@ -11,3 +11,4 @@ class Employee(Base):
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
     full_name: Mapped[str] = mapped_column(String(100), nullable=False)
     position: Mapped[str] = mapped_column(String(50), default="Intern")
+    age: Mapped[int] = mapped_column(server_default="0")
