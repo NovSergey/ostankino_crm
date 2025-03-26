@@ -13,4 +13,4 @@ class Position(Base):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True, unique=True)
     title: Mapped[str] = mapped_column(String(100), unique=True)
 
-    employees: Mapped[list["Employee"]] = relationship(back_populates="positions")
+    employees: Mapped[list["Employee"]] = relationship(back_populates="position")

@@ -1,9 +1,11 @@
-from fastapi import APIRouter, status, Depends
+from urllib.parse import unquote
+
+from fastapi import APIRouter, status, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend.core import db_helper
+from application.backend.core import db_helper
 from . import crud
-from .dependencies import employee_by_id
+from .dependencies import employee_by_id, search_by_full_name
 from .schemas import Employee, EmployeeCreate, EmployeeUpdate
 
 router = APIRouter(tags=["Employees"])
@@ -27,6 +29,12 @@ async def create_employee(
 @router.get("/{employee_id}/", response_model=Employee)
 async def get_employee(employee: Employee = Depends(employee_by_id)):
     return employee
+
+
+@router.get("/search", response_model=list[Employee])
+async def search_employee(full_name: str = Query("", min_length=1),
+                          session: AsyncSession = Depends(db_helper.session_dependency)):
+    return await search_by_full_name(unquote(full_name), session)
 
 
 @router.put("/{employee_id}/")
