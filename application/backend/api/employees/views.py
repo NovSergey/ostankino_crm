@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from application.backend.core import db_helper
 from . import crud
-from .dependencies import employee_by_id, search_by_full_name
+from .dependencies import employee_by_id, employee_search
 from .schemas import Employee, EmployeeCreate, EmployeeUpdate
 
 router = APIRouter(tags=["Employees"])
@@ -32,9 +32,9 @@ async def get_employee(employee: Employee = Depends(employee_by_id)):
 
 
 @router.get("/search", response_model=list[Employee])
-async def search_employee(full_name: str = Query("", min_length=1),
+async def search_employee(full_name: str = Query(""), position_id: int = Query(None),
                           session: AsyncSession = Depends(db_helper.session_dependency)):
-    return await search_by_full_name(unquote(full_name), session)
+    return await employee_search(full_name=unquote(full_name), position_id=position_id, session=session)
 
 
 @router.put("/{employee_id}/")

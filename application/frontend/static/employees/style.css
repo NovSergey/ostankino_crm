@@ -114,3 +114,160 @@ tr:hover {
     font-size: 22px;
     cursor: pointer;
 }
+
+
+
+
+.custom-select-wrapper {
+    position: relative;
+    width: 45%;
+}
+
+.custom-select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    appearance: none;
+    background-size: 16px;
+    cursor: pointer;
+}
+
+.custom-select:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+
+
+
+
+/* Новые стили для навбара */
+.navbar {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+}
+
+.navbar-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #007bff;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.nav-menu {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    transition: all 0.4s ease;
+}
+
+.nav-menu li a {
+    text-decoration: none;
+    color: #333;
+    padding: 0.8rem 1.2rem;
+    display: flex;
+    align-items: center;
+    transition: all 0.3s;
+    position: relative;
+}
+
+.nav-menu li a i {
+    margin-right: 8px;
+    font-size: 1.1rem;
+}
+
+.nav-menu li a:hover {
+    color: #007bff;
+}
+
+.nav-menu li a:hover::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    height: 2px;
+    background: #007bff;
+    animation: underline 0.3s ease;
+}
+
+.hamburger {
+    display: none;
+    cursor: pointer;
+    padding: 0.5rem;
+}
+
+.bar {
+    width: 25px;
+    height: 3px;
+    background: #007bff;
+    margin: 5px 0;
+    transition: 0.4s;
+}
+
+@keyframes underline {
+    from { width: 0 }
+    to { width: 60% }
+}
+
+@media (max-width: 768px) {
+    .hamburger {
+        display: block;
+    }
+
+    .nav-menu {
+        position: fixed;
+        top: 60px;
+        right: -100%;
+        flex-direction: column;
+        background: white;
+        width: 100%;
+        max-width: 300px;
+        box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+        padding: 1rem 0;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .nav-menu.active {
+        right: 0;
+    }
+
+    .nav-menu li a {
+        padding: 1rem 2rem;
+    }
+
+    .hamburger.active .bar:nth-child(1) {
+        transform: translateY(8px) rotate(45deg);
+    }
+
+    .hamburger.active .bar:nth-child(2) {
+        opacity: 0;
+    }
+
+    .hamburger.active .bar:nth-child(3) {
+        transform: translateY(-8px) rotate(-45deg);
+    }
+}
+
+/* Добавить отступ для основного контента */
+.container {
+    margin-top: 80px;
+}

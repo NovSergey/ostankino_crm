@@ -5,14 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CRM Пропусков</title>
     <link rel="stylesheet" href="{{ url_for('static', path='/employees/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="#" class="logo">CRM Пропусков</a>
+            <div class="hamburger" onclick="toggleMenu()">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#"><i class="fas fa-users"></i>Работники</a></li>
+                <li><a href="#"><i class="fas fa-building"></i>Объекты</a></li>
+                <li><a href="#"><i class="fas fa-id-card"></i>Пропуска</a></li>
+                <li><a href="#"><i class="fas fa-cog"></i>Настройки</a></li>
+            </ul>
+        </div>
+    </nav>
+
     <div class="container">
         <h2>Работники</h2>
 
         <div class="controls">
             <input type="text" id="searchName" placeholder="Поиск по ФИО...">
-            <input type="text" id="searchObject" placeholder="Поиск по объекту...">
+            <div class="custom-select-wrapper">
+                <select id="searchPosition" class="custom-select"></select>
+            </div>
         </div>
 
         <div class="table-container">
@@ -36,7 +56,7 @@
             <h3>Детали записи</h3>
             <p><strong>ID:</strong> <span id="modalId"></span></p>
             <p><strong>ФИО:</strong> <span id="modalName"></span></p>
-            <p><strong>Объект:</strong> <span id="modalObject"></span></p>
+            <p><strong>Объект:</strong> <span id="modalPosition"></span></p>
         </div>
     </div>
 
