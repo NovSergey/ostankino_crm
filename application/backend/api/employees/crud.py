@@ -5,7 +5,7 @@ from sqlalchemy.engine import Result
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from application.backend.core.models import Employee, Position
+from application.backend.core.models import Employee, Group
 
 from .schemas import EmployeeCreate, EmployeeUpdate
 
@@ -27,7 +27,7 @@ async def get_employee(session: AsyncSession, employee_id: UUID) -> Employee | N
 async def create_employee(session: AsyncSession, employee: EmployeeCreate) -> Employee:
     employee_created = Employee(**employee.model_dump())
     if employee.position_id:
-        employee_created.position = await session.get(Position, employee.position_id)
+        employee_created.position = await session.get(Group, employee.position_id)
     session.add(employee_created)
     await session.commit()
     return employee_created

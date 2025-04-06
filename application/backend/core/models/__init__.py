@@ -3,13 +3,13 @@ __all__ = (
     "RoleEnum",
     "VisitStatusEnum",
     "Employee",
-    "Position",
+    "Group",
     "Object",
     "VisitHistory",
 )
 
 from .base import Base
 from .employes import Employee, RoleEnum
-from .positions import Position
+from .groups import Group
 from .objects import Object
 from .visit_history import VisitHistory, VisitStatusEnum

@@ -3,7 +3,7 @@ from typing import Optional
 
 from pydantic import BaseModel, ConfigDict
 
-from application.backend.api.positions.schemas import Position
+from application.backend.api.groups.schemas import Position
 
 
 class EmployeeBase(BaseModel):

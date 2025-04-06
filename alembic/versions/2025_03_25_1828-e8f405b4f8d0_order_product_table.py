@@ -33,7 +33,7 @@ def downgrade() -> None:
     sa.Column('employee_id', sa.UUID(), autoincrement=False, nullable=False),
     sa.Column('position_id', sa.INTEGER(), autoincrement=False, nullable=False),
     sa.ForeignKeyConstraint(['employee_id'], ['employees.id'], name='employee_position_association_employee_id_fkey'),
-    sa.ForeignKeyConstraint(['position_id'], ['positions.id'], name='employee_position_association_position_id_fkey'),
+    sa.ForeignKeyConstraint(['position_id'], ['groups.id'], name='employee_position_association_position_id_fkey'),
     sa.PrimaryKeyConstraint('id', name='employee_position_association_pkey')
     )
     # ### end Alembic commands ###

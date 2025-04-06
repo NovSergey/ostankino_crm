@@ -3,13 +3,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from application.backend.core import db_helper
 from . import crud
-from .schemas import Position
+from .schemas import Group
 
-router = APIRouter(tags=["Positions"])
+router = APIRouter(tags=["Groups"])
 
 
-@router.get("/", response_model=list[Position])
+@router.get("/", response_model=list[Group])
 async def get_employees(
         session: AsyncSession = Depends(db_helper.session_dependency),
 ):
-    return await crud.get_positions(session=session)
+    return await crud.get_groups(session=session)

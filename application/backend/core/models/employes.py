@@ -10,7 +10,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from .base import Base
 
 if TYPE_CHECKING:
-    from .positions import Position
+    from .groups import Group
     from .objects import Object
     from .visit_history import VisitHistory
 
@@ -29,7 +29,7 @@ class Employee(Base):
     object_id: Mapped[int | None] = mapped_column(ForeignKey("objects.id"), nullable=True)
     object: Mapped["Object"] = relationship(back_populates="employees")
 
-    position_id: Mapped[int] = mapped_column(ForeignKey("positions.id"), nullable=True)
-    position: Mapped["Position"] = relationship(back_populates="employees")
+    group_id: Mapped[int] = mapped_column(ForeignKey("groups.id"), nullable=True)
+    group: Mapped["Group"] = relationship(back_populates="employees")
 
     visit_history: Mapped[list["VisitHistory"]] = relationship(back_populates="employee")

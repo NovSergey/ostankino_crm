@@ -8,9 +8,9 @@ from .base import Base
 if TYPE_CHECKING:
     from .employes import Employee
 
-class Position(Base):
-    __tablename__ = "positions"
+class Group(Base):
+    __tablename__ = "groups"
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True, unique=True)
     title: Mapped[str] = mapped_column(String(100), unique=True)
 
-    employees: Mapped[list["Employee"]] = relationship(back_populates="position")
+    employees: Mapped[list["Employee"]] = relationship(back_populates="group")

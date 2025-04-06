@@ -7,5 +7,5 @@
 #     Base.metadata,
 #     Column("id", Integer, primary_key=True),
 #     Column("employee_id", ForeignKey("employees.id"), nullable=False),
-#     Column("position_id", ForeignKey("positions.id"), nullable=False)
+#     Column("position_id", ForeignKey("groups.id"), nullable=False)
 # )
