@@ -51,6 +51,8 @@ document.addEventListener("DOMContentLoaded", () => {
             row.innerHTML = `
                 <td class="hide-on-small">${entry.id}</td>
                 <td>${entry.full_name}</td>
+                <td class="hide-on-small">${entry.phone}</td>
+                <td>${entry.object ? entry.object.title : "Не установлено"}</td>
                 <td>${entry.group ? entry.group.title : "Не установлено"}</td>
             `;
             row.addEventListener("click", () => openModal(entry));
@@ -68,8 +70,8 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("modal").style.display = "block";
         document.getElementById("modalId").textContent = entry.id;
         document.getElementById("modalName").textContent = entry.full_name;
-        document.getElementById("modalPhone").textContent = entry.full_name;
-        document.getElementById("modalPosition").textContent = entry.group ? entry.group.title : "Не установлено";
+        document.getElementById("modalPhone").textContent = entry.phone;
+        document.getElementById("modalObject").textContent = entry.object ? entry.object.name : "Не установлено";
         document.getElementById("modalGroup").textContent = entry.group ? entry.group.title : "Не установлено";
     }
 
