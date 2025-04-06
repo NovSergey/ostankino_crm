@@ -24,15 +24,15 @@ async def employee_by_id(
         detail=f"Product {employee_id} not found!",
     )
 
-async def employee_search(full_name: str | None, position_id: int | None, session: AsyncSession) -> list[Employee]:
-    stmt = select(Employee).options(selectinload(Employee.position))
+async def employee_search(full_name: str | None, group_id: int | None, session: AsyncSession) -> list[Employee]:
+    stmt = select(Employee).options(selectinload(Employee.group), selectinload(Employee.object))
     if full_name:
         stmt = stmt.where(Employee.full_name.ilike(f"%{full_name}%"))
-    if position_id is not None:
-        if position_id == -1:
-            stmt = stmt.where(Employee.position_id.is_(None))  # Ищем сотрудников без позиции
+    if group_id is not None:
+        if group_id == -1:
+            stmt = stmt.where(Employee.group_id.is_(None))  # Ищем сотрудников без позиции
         else:
-            stmt = stmt.where(Employee.position_id == position_id)
+            stmt = stmt.where(Employee.group_id == group_id)
     stmt = stmt.order_by(Employee.id)
     result = await session.execute(stmt)
     return list(result.scalars().all())

@@ -32,9 +32,9 @@ async def get_employee(employee: Employee = Depends(employee_by_id)):
 
 
 @router.get("/search", response_model=list[Employee])
-async def search_employee(full_name: str = Query(""), position_id: int = Query(None),
+async def search_employee(full_name: str = Query(""), group_id: int = Query(None),
                           session: AsyncSession = Depends(db_helper.session_dependency)):
-    return await employee_search(full_name=unquote(full_name), position_id=position_id, session=session)
+    return await employee_search(full_name=unquote(full_name), group_id=group_id, session=session)
 
 
 @router.put("/{employee_id}/")

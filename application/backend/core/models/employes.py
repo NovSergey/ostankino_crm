@@ -32,4 +32,4 @@ class Employee(Base):
     group_id: Mapped[int] = mapped_column(ForeignKey("groups.id"), nullable=True)
     group: Mapped["Group"] = relationship(back_populates="employees")
 
-    visit_history: Mapped[list["VisitHistory"]] = relationship(back_populates="employee")
+    #visit_history: Mapped[list["VisitHistory"]] = relationship(back_populates="employee")

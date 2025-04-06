@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
     const searchName = document.getElementById("searchName");
-    const searchPosition = document.getElementById("searchPosition");
+    const searchGroup = document.getElementById("searchGroup");
     const tableBody = document.getElementById("tableBody");
 
     async function getData() {
@@ -13,26 +13,26 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    async function getPositions() {
-        searchPosition.innerHTML = '<option value="">Выберите объект...</option>';
+    async function getGroups() {
+        searchGroup.innerHTML = '<option value="">Выберите объект...</option>';
         try {
-            const response = await fetch("/api/positions/");
-            const positions = await response.json();
-            positions.forEach(pos => {
+            const response = await fetch("/api/groups/");
+            const groups = await response.json();
+            groups.forEach(pos => {
                 const option = document.createElement("option");
                 option.value = pos.id;
                 option.textContent = pos.title;
-                searchPosition.appendChild(option);
+                searchGroup.appendChild(option);
             });
         } catch (error) {
             console.error("Ошибка загрузки объектов:", error);
         }
-        searchPosition.innerHTML += '<option value="-1">Не установлено</option>';
+        searchGroup.innerHTML += '<option value="-1">Не установлено</option>';
     }
 
-    async function searchData(full_name, position_id) {
+    async function searchData(full_name, group_id) {
         try {
-            const response = await fetch(`/api/employees/search?full_name=${encodeURIComponent(full_name)}&${position_id != "" ? "position_id="+position_id:""}`);
+            const response = await fetch(`/api/employees/search?full_name=${encodeURIComponent(full_name)}&${group_id != "" ? "group_id="+group_id:""}`);
             if (!response.ok){
                 console.log(full_name);
                 console.error(await response.text());
@@ -51,7 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
             row.innerHTML = `
                 <td class="hide-on-small">${entry.id}</td>
                 <td>${entry.full_name}</td>
-                <td>${entry.position ? entry.position.title : "Не установлено"}</td>
+                <td>${entry.group ? entry.group.title : "Не установлено"}</td>
             `;
             row.addEventListener("click", () => openModal(entry));
             tableBody.appendChild(row);
@@ -60,15 +60,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async function filterTable() {
         let nameValue = searchName.value.trim();
-        let positionId = searchPosition.value.trim();
-        await searchData(nameValue, positionId);
+        let groupId = searchGroup.value.trim();
+        await searchData(nameValue, groupId);
     }
 
     function openModal(entry) {
         document.getElementById("modal").style.display = "block";
         document.getElementById("modalId").textContent = entry.id;
         document.getElementById("modalName").textContent = entry.full_name;
-        document.getElementById("modalPosition").textContent = entry.position ? entry.position.title : "Не установлено";
+        document.getElementById("modalPhone").textContent = entry.full_name;
+        document.getElementById("modalPosition").textContent = entry.group ? entry.group.title : "Не установлено";
+        document.getElementById("modalGroup").textContent = entry.group ? entry.group.title : "Не установлено";
     }
 
     function closeModal() {
@@ -76,10 +78,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     searchName.addEventListener("input", filterTable);
-    searchPosition.addEventListener("input", filterTable);
+    searchGroup.addEventListener("input", filterTable);
 
     getData();
-    getPositions();
+    getGroups();
     window.closeModal = closeModal;
 });
 
