@@ -9,7 +9,7 @@ __all__ = (
 )
 
 from .base import Base
-from .employes import Employee, RoleEnum
+from .employees import Employee, RoleEnum
 from .groups import Group
 from .objects import Object
 from .visit_history import VisitHistory, VisitStatusEnum

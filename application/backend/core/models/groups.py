@@ -6,7 +6,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from .base import Base
 
 if TYPE_CHECKING:
-    from .employes import Employee
+    from .employees import Employee
 
 class Group(Base):
     __tablename__ = "groups"

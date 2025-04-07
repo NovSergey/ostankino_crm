@@ -37,7 +37,7 @@ async def search_employee(full_name: str = Query(""), group_id: int = Query(None
     return await employee_search(full_name=unquote(full_name), group_id=group_id, session=session)
 
 
-@router.put("/{employee_id}/")
+@router.put("/{employee_id}/", response_model=Employee)
 async def update_employee(
         employee_update: EmployeeUpdate,
         employee: Employee = Depends(employee_by_id),
