@@ -12,7 +12,6 @@ from .base import Base
 if TYPE_CHECKING:
     from .groups import Group
     from .objects import Object
-    from .visit_history import VisitHistory
 
 class RoleEnum(enum.Enum):
     admin = "admin"
@@ -27,9 +26,7 @@ class Employee(Base):
     role: Mapped[RoleEnum] = mapped_column(PgEnum(RoleEnum, name="role_enum"), nullable=False)
 
     object_id: Mapped[int | None] = mapped_column(ForeignKey("objects.id"), nullable=True)
-    object: Mapped["Object"] = relationship(back_populates="employees")
+    object: Mapped["Object"] = relationship()
 
     group_id: Mapped[int] = mapped_column(ForeignKey("groups.id"), nullable=True)
-    group: Mapped["Group"] = relationship(back_populates="employees")
-
-    visit_history: Mapped[list["VisitHistory"]] = relationship(back_populates="employee", foreign_keys="[VisitHistory.employee_id]")
+    group: Mapped["Group"] = relationship()

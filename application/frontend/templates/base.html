@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CRM Пропусков{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='/base/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="#" class="logo">CRM Пропусков</a>
+            <div class="hamburger" onclick="toggleMenu()">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="/employees"><i class="fas fa-users"></i>Работники</a></li>
+                <li><a href="/objects"><i class="fas fa-building"></i>Объекты</a></li>
+                <li><a href="#"><i class="fas fa-id-card"></i>Пропуска</a></li>
+                <li><a href="#"><i class="fas fa-cog"></i>Настройки</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+
+
+    <script src="{{ url_for('static', path='/base/script.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -13,9 +13,11 @@ router = APIRouter(tags=["Employees"])
 
 @router.get("/", response_model=list[Employee])
 async def get_employees(
+        offset: int = Query(0, ge=0),
+        count: int = Query(100, le=100),
         session: AsyncSession = Depends(db_helper.session_dependency),
 ):
-    return await crud.get_employees(session=session)
+    return await crud.get_employees(session, offset, count)
 
 
 @router.post("/", response_model=Employee, status_code=status.HTTP_201_CREATED)
@@ -32,9 +34,20 @@ async def get_employee(employee: Employee = Depends(employee_by_id)):
 
 
 @router.get("/search", response_model=list[Employee])
-async def search_employee(full_name: str = Query(""), group_id: int = Query(None),
-                          session: AsyncSession = Depends(db_helper.session_dependency)):
-    return await employee_search(full_name=unquote(full_name), group_id=group_id, session=session)
+async def search_employees(
+        full_name: str = Query(""),
+        group_id: int = Query(None),
+        offset: int = Query(0, ge=0),
+        count: int = Query(100, le=100),
+        session: AsyncSession = Depends(db_helper.session_dependency)
+):
+    return await employee_search(
+        full_name=unquote(full_name),
+        group_id=group_id,
+        session=session,
+        offset=offset,
+        count=count
+    )
 
 
 @router.put("/{employee_id}/", response_model=Employee)

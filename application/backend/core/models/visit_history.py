@@ -27,13 +27,13 @@ class VisitHistory(Base):
     exit_time: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
     object_id: Mapped[int] = mapped_column(ForeignKey("objects.id"), nullable=False)
-    object: Mapped["Object"] = relationship(back_populates="visit_history")
+    object: Mapped["Object"] = relationship()
 
 
     scanned_by_user_id: Mapped[int] = mapped_column(ForeignKey("employees.id"), nullable=False)
     scanned_by_user: Mapped["Employee"] = relationship(foreign_keys=[scanned_by_user_id])
 
     employee_id: Mapped[int] = mapped_column(ForeignKey("employees.id"), nullable=False)
-    employee: Mapped["Employee"] = relationship(back_populates="visit_history", foreign_keys=[employee_id])
+    employee: Mapped["Employee"] = relationship(foreign_keys=[employee_id])
 
     status: Mapped[VisitStatusEnum] = mapped_column(PgEnum(VisitStatusEnum, name="visit_status_enum"), nullable=False)

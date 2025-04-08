@@ -1,21 +1,18 @@
-from typing import TYPE_CHECKING
+import enum
 
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.dialects.postgresql import ENUM as PgEnum
 
 from .base import Base
 
-if TYPE_CHECKING:
-    from .employees import Employee
-    from .visit_history import VisitHistory
+class ObjectStatusEnum(enum.Enum):
+    open = "Открыт"
+    close = "Закрыт"
 
 class Object(Base):
     __tablename__ = 'objects'
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True, unique=True)
     name: Mapped[str] = mapped_column(String, unique=True, nullable=False)
-
-    employees: Mapped[list["Employee"]] = relationship(back_populates="object")
-
-    visit_history: Mapped[list["VisitHistory"]] = relationship(back_populates="object",
-                                                               foreign_keys="[VisitHistory.object_id]")
+    status: Mapped[ObjectStatusEnum] = mapped_column(PgEnum(ObjectStatusEnum, name="object_status_enum"), nullable=False)
