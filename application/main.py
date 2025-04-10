@@ -1,8 +1,11 @@
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
+from authx.exceptions import AuthXException
 import uvicorn
+from starlette import status
 
 from application.backend.api import router as router_backend
 from application.frontend.routers import router as router_frontend
@@ -22,9 +25,16 @@ app.include_router(router=router_frontend)
 app.mount("/static", StaticFiles(directory=settings_frontend.static_folder), name="static")
 
 
-@app.get("/")
-async def index():
-    return "OK"
+@app.exception_handler(AuthXException)
+async def exception_token_handler(request: Request, exc: AuthXException):
+
+    if "api" not in str(request.url):
+        return RedirectResponse(url="/login")
+    return JSONResponse(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        content={"detail": "Invalid authentication token"},
+    )
+
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="192.168.0.155", port=8080, reload=True)

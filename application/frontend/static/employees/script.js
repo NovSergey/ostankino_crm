@@ -6,6 +6,12 @@ document.addEventListener("DOMContentLoaded", () => {
     async function getData() {
         try {
             const response = await fetch("/api/employees/");
+            if (response.status === 403){
+                window.location.href = '/';
+            }
+            else if (response.status === 401){
+                window.location.href = '/login'
+            }
             const data = await response.json();
             renderTable(data);
         } catch (error) {
@@ -17,6 +23,12 @@ document.addEventListener("DOMContentLoaded", () => {
         searchGroup.innerHTML = '<option value="">Выберите объект...</option>';
         try {
             const response = await fetch("/api/groups/");
+            if (response.status === 403){
+                window.location.href = '/';
+            }
+            else if (response.status === 401){
+                window.location.href = '/login'
+            }
             const groups = await response.json();
             groups.forEach(pos => {
                 const option = document.createElement("option");
@@ -36,7 +48,12 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!response.ok){
                 console.log(full_name);
                 console.error(await response.text());
-                throw new Error("Ошибка загрузки данных");
+                if (response.status === 403){
+                    window.location.href = '/';
+                }
+                else if (response.status === 401){
+                    window.location.href = '/login'
+                }
             }
             const data = await response.json();
             renderTable(data);

@@ -7,6 +7,7 @@ __all__ = (
     "Group",
     "Object",
     "VisitHistory",
+    "User"
 )
 
 from .base import Base
@@ -14,3 +15,4 @@ from .employees import Employee, RoleEnum
 from .groups import Group
 from .objects import Object, ObjectStatusEnum
 from .visit_history import VisitHistory, VisitStatusEnum
+from .users import User

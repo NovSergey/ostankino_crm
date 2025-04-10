@@ -8,7 +8,7 @@ async def get_objects(session: AsyncSession) -> list[Object]:
     result: Result = await session.execute(stmt)
     return list(result.scalars().all())
 
-async def get_object(session: AsyncSession, object_id: int) -> list[Object]:
-    stmt = select(Object).order_by(Object.id)
+async def get_object(session: AsyncSession, object_id: int) -> Object | None:
+    stmt = select(Object).where(Object.id == object_id)
     result: Result = await session.execute(stmt)
-    return list(result.scalars().all())
+    return result.scalar_one_or_none()

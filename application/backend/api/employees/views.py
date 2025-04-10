@@ -7,15 +7,16 @@ from application.backend.core import db_helper
 from . import crud
 from .dependencies import employee_by_id, employee_search
 from .schemas import Employee, EmployeeCreate, EmployeeUpdate
+from application.backend.api.users.dependencies import check_current_user
 
-router = APIRouter(tags=["Employees"])
+router = APIRouter(tags=["Employees"], dependencies=[Depends(check_current_user())])
 
 
 @router.get("/", response_model=list[Employee])
 async def get_employees(
         offset: int = Query(0, ge=0),
         count: int = Query(100, le=100),
-        session: AsyncSession = Depends(db_helper.session_dependency),
+        session: AsyncSession = Depends(db_helper.session_dependency)
 ):
     return await crud.get_employees(session, offset, count)
 
