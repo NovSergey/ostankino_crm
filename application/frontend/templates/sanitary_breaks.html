@@ -15,24 +15,7 @@
 </div>
 <div class="table-wrapper">
     <table class="custom-table" id="schedule-table">
-        <thead>
-            <tr>
-                <th></th>
-                <th>ПТО-1</th>
-                <th>ПТО-2</th>
-                <th>ПТО-3</th>
-                <th>ТП-1</th>
-                <th>ТП-2</th>
-                <th>ТП-3</th>
-                <th>ТП-4</th>
-                <th>ФБО-1</th>
-                <th>ФБО-2</th>
-                <th>ФБО-3</th>
-                <th>ФБО-4</th>
-                <th>Крепость</th>
-                <th>Условия труда</th>
-            </tr>
-        </thead>
+        <thead id="table-head"></thead>
         <tbody id="table-body">
             <!-- Данные будут добавлены через JavaScript -->
         </tbody>
@@ -42,6 +25,6 @@
 {% endblock %}
 
 {% block scripts %}
-const TYPE_BREAK = "{{ type }}"
+<script> const TYPE_BREAK = "{{ type }}"</script>
 <script src="{{ url_for('static', path='/sanitary_breaks/script.js') }}"></script>
 {% endblock %}

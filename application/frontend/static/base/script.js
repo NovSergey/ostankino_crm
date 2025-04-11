@@ -4,7 +4,31 @@ function toggleMenu() {
     const hamburger = document.querySelector('.hamburger');
     navMenu.classList.toggle('active');
     hamburger.classList.toggle('active');
+
+    document.querySelectorAll('.dropdown').forEach(dropdown => {
+        dropdown.classList.remove('active');
+    });
 }
+
+document.querySelectorAll('.dropdown-toggle').forEach(item => {
+    item.addEventListener('click', (e) => {
+        if (window.innerWidth <= 768) {
+            e.preventDefault();
+            const parent = item.parentElement;
+            const isActive = parent.classList.contains('active');
+
+            // Закрываем все остальные подменю
+            document.querySelectorAll('.dropdown').forEach(dropdown => {
+                if (dropdown !== parent) {
+                    dropdown.classList.remove('active');
+                }
+            });
+
+            // Переключаем состояние текущего подменю
+            parent.classList.toggle('active', !isActive);
+        }
+    });
+});
 
 // Закрытие меню при клике вне области
 document.addEventListener('click', (e) => {

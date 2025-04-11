@@ -6,7 +6,7 @@ from application.backend.core import db_helper
 from . import crud
 from .dependencies import check_current_user
 from .schemas import UserOut, UserBase
-from application.backend.core.config import security
+from application.backend.core.config import security, auth_config
 
 router = APIRouter(tags=["Users"])
 
