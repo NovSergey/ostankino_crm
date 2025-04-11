@@ -7,7 +7,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: calc(100vh - 40px); /* Учитываем margin */
+    min-height: calc(90vh - 40px); /* Учитываем margin */
 }
 
 .login-box {

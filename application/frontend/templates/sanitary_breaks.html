@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Санитраные разрывы - CRM Пропусков{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', path='/sanitary_breaks/style.css') }}">
+{% endblock %}
+
+{% block content %}
+<h2 class="title">Санитраные разрывы {{ name }}</h2>
+
+<div class="table-controls">
+    <button id="edit-btn" class="btn btn-primary">Редактировать разрывы</button>
+    <button id="save-btn" class="btn btn-success" style="display: none;">Сохранить</button>
+</div>
+<div class="table-wrapper">
+    <table class="custom-table" id="schedule-table">
+        <thead>
+            <tr>
+                <th></th>
+                <th>ПТО-1</th>
+                <th>ПТО-2</th>
+                <th>ПТО-3</th>
+                <th>ТП-1</th>
+                <th>ТП-2</th>
+                <th>ТП-3</th>
+                <th>ТП-4</th>
+                <th>ФБО-1</th>
+                <th>ФБО-2</th>
+                <th>ФБО-3</th>
+                <th>ФБО-4</th>
+                <th>Крепость</th>
+                <th>Условия труда</th>
+            </tr>
+        </thead>
+        <tbody id="table-body">
+            <!-- Данные будут добавлены через JavaScript -->
+        </tbody>
+    </table>
+</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+const TYPE_BREAK = "{{ type }}"
+<script src="{{ url_for('static', path='/sanitary_breaks/script.js') }}"></script>
+{% endblock %}

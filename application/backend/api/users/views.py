@@ -4,13 +4,14 @@ from starlette import status
 
 from application.backend.core import db_helper
 from . import crud
+from .dependencies import check_current_user
 from .schemas import UserOut, UserBase
-from application.backend.core.config import security, auth_config
+from application.backend.core.config import security
 
 router = APIRouter(tags=["Users"])
 
 
-@router.post("/register", response_model=UserOut)
+@router.post("/register", response_model=UserOut, dependencies=[Depends(check_current_user(True))])
 async def register_user(user_in: UserBase, session: AsyncSession = Depends(db_helper.session_dependency)):
     existing = await crud.get_user_by_username(session, user_in.username)
     if existing:
@@ -29,7 +30,7 @@ async def user_login(creds: UserBase, response: Response,
     raise HTTPException(status_code=401, detail="Incorrect username or password")
 
 
-@router.delete("/{username}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{username}", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(check_current_user(True))])
 async def user_delete(
         username: str,
         session: AsyncSession = Depends(db_helper.session_dependency)

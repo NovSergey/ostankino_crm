@@ -8,5 +8,5 @@ templates = Jinja2Templates(directory=settings.templates_folder)
 
 
 @router.get("/")
-async def get_employees_page(request: Request):
+async def get_objects_page(request: Request):
     return templates.TemplateResponse(name="objects.html", request=request)
