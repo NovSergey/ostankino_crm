@@ -24,6 +24,10 @@ class EmployeeUpdate(EmployeeCreate):
     phone: str | None = None
     role: RoleEnum | None = None
 
+class EmployeeFullBase(EmployeeBase):
+    id: uuid.UUID
+
+
 class Employee(BaseModel):
     id: uuid.UUID
     full_name: str

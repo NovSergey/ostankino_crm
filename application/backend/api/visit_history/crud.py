@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from fastapi import HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.engine import Result
@@ -46,3 +47,22 @@ async def create_visit_history(session: AsyncSession, entry: VisitHistoryCreate)
         .where(VisitHistory.id == entry_created.id)
     )
     return result.scalar_one()
+
+async def get_active_users(session: AsyncSession, object_id: int) -> list[VisitHistory]:
+    two_days_ago = datetime.utcnow() - timedelta(days=2)
+    stmt = (
+        select(VisitHistory)
+        .options(
+            selectinload(VisitHistory.object),
+            selectinload(VisitHistory.employee),
+            selectinload(VisitHistory.scanned_by_user)
+        )
+        .filter(
+        VisitHistory.object_id == object_id,
+            VisitHistory.exit_time == None,
+            VisitHistory.entry_time >= two_days_ago
+        )
+    )
+    result = await session.execute(stmt)
+
+    return list(result.scalars().all())

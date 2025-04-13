@@ -1,0 +1,121 @@
+.object-details {
+    padding: 2rem;
+    background: white;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+}
+
+.object-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.object-title {
+    color: #333;
+    margin: 0;
+}
+
+.section-title {
+    color: #333;
+    margin: 2rem 0 1rem;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 0.5rem;
+}
+
+.employee-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.employee-table th,
+.employee-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.employee-table th {
+    background: #007bff;
+    color: white;
+}
+
+.employee-table tr:hover {
+    background: #f8f9fa;
+}
+
+.status.open {
+  color: #155724;
+}
+
+.status.close {
+  color: #721c24;
+}
+
+
+/* Медиа-запрос для телефонов */
+@media (max-width: 768px) {
+  .hide-on-small {
+      display: none;
+  }
+}
+/* Модальное окно */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  margin: 15% auto;
+  width: 80%;
+  max-width: 400px;
+  border-radius: 8px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+}
+
+.close {
+  float: right;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    .object-details {
+        padding: 1rem;
+    }
+
+    .object-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .employee-table {
+        display: block;
+        overflow-x: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .info-card {
+        padding: 0.8rem;
+    }
+
+    .employee-table th,
+    .employee-table td {
+        padding: 0.8rem;
+        font-size: 0.9rem;
+    }
+}
