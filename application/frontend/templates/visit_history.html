@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Работники - CRM Пропусков{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', path='/table/style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', path='/visit_history/style.css') }}">
+{% endblock %}
+
+{% block content %}
+<h2 class="title">История посещений</h2>
+
+<div class="controls">
+    <input type="text" id="searchName" placeholder="Поиск по ФИО...">
+    <div class="custom-select-wrapper">
+        <select id="searchObject" class="custom-select"></select>
+    </div>
+</div>
+
+<div class="table-container">
+    <table id="dataTable">
+        <thead>
+            <tr>
+                <th class="hide-on-small">ID</th>
+                <th>ФИО</th>
+                <th>Объект</th>
+                <th>Время входа</th>
+                <th>Время выхода</th>
+                <th class="hide-on-small">Статус</th>
+                <th class="hide-on-small">Сканировал</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+    </table>
+</div>
+{% include "visit_table_modal.html" %}
+{% endblock %}
+
+{% block scripts %}
+<script type="module" src="{{ url_for('static', path='/visit_history/script.js') }}"></script>
+{% endblock %}
+

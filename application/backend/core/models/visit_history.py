@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING
 import enum
 from datetime import datetime
 
+from pydantic import field_serializer
 from sqlalchemy import ForeignKey, DateTime
 from sqlalchemy.sql import func
 from sqlalchemy.dialects.postgresql import ENUM as PgEnum

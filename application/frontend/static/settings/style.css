@@ -1,0 +1,107 @@
+/* Общая обёртка */
+.container {
+  max-width: 100%;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+/* Основные вкладки */
+.tabs {
+  display: flex;
+  border-bottom: 2px solid #ccc;
+  margin-bottom: 1rem;
+  justify-content: center;
+}
+
+.tab-btn {
+  padding: 0.5rem 1rem;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  font-weight: 600;
+  color: #333;
+  transition: 0.3s;
+}
+
+.tab-btn.active {
+  border-bottom: 3px solid #007bff;
+  color: #007bff;
+}
+
+/* Контент вкладок */
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+/* Подвкладки (subtabs) */
+.subtabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 1rem;
+}
+
+.subtab-btn {
+  padding: 8px 16px;
+  background: #f1f1f1;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: 0.2s;
+}
+
+.subtab-btn.active {
+  background: #007bff;
+  color: white;
+}
+
+
+/* Форма добавления пользователя */
+#userForm {
+  display: grid;
+  justify-content: center;
+  gap: 1rem;
+}
+
+#userForm input,
+#userForm select {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  flex: 1;
+  min-width: 200px;
+}
+
+#userForm button {
+  padding: 10px 14px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+#userForm button:hover {
+  background-color: #0056b3;
+}
+/* Адаптив */
+@media (max-width: 768px) {
+  .tabs {
+      flex-wrap: wrap;
+  }
+
+  .tab-btn {
+      flex: 1 1 auto;
+      text-align: center;
+  }
+
+  #userForm .controls {
+      flex-direction: column;
+  }
+}

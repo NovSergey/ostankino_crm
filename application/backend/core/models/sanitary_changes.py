@@ -18,8 +18,8 @@ class SanitaryChange(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True, unique=True)
 
-    sanitary_object_id: Mapped[int] = mapped_column(ForeignKey("sanitary_breaks.id"), nullable=False)
-    sanitary_object: Mapped["SanitaryBreak"] = relationship()
+    sanitary_break_id: Mapped[int] = mapped_column(ForeignKey("sanitary_breaks.id"), nullable=False)
+    sanitary_break: Mapped["SanitaryBreak"] = relationship()
 
     time_from: Mapped[int] = mapped_column(nullable=False)
     time_to: Mapped[int] = mapped_column(nullable=False)

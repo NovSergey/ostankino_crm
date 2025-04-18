@@ -27,7 +27,6 @@ class EmployeeUpdate(EmployeeCreate):
 class EmployeeFullBase(EmployeeBase):
     id: uuid.UUID
 
-
 class Employee(BaseModel):
     id: uuid.UUID
     full_name: str

@@ -105,6 +105,15 @@
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
 }
 
+
+.disabled-cell {
+  background-color: #e0e0e0;
+  pointer-events: none;
+  color: #888;
+  text-align: center;
+}
+
+
 /* Адаптивность: уменьшаем шрифт и отступы на маленьких экранах */
 @media (max-width: 768px) {
   .custom-table th,

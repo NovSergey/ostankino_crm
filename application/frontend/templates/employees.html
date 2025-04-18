@@ -3,6 +3,7 @@
 {% block title %}Работники - CRM Пропусков{% endblock %}
 
 {% block head %}
+<link rel="stylesheet" href="{{ url_for('static', path='/table/style.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', path='/employees/style.css') }}">
 {% endblock %}
 
@@ -35,12 +36,14 @@
 <div id="modal" class="modal">
     <div class="modal-content">
         <span class="close" onclick="closeModal()">&times;</span>
-        <h3>Детали записи</h3>
-        <p><strong>ID:</strong> <span id="modalId"></span></p>
-        <p><strong>ФИО:</strong> <span id="modalName"></span></p>
-        <p><strong>Телефон:</strong> <span id="modalPhone"></span></p>
-        <p><strong>Объект:</strong> <span id="modalObject"></span></p>
-        <p><strong>Группа:</strong> <span id="modalGroup"></span></p>
+        <div class="modal-body">
+            <h3>Детали записи</h3>
+            <p><strong>ID:</strong> <span id="modalId"></span></p>
+            <p><strong>ФИО:</strong> <span id="modalName"></span></p>
+            <p><strong>Телефон:</strong> <span id="modalPhone"></span></p>
+            <p><strong>Объект:</strong> <span id="modalObject"></span></p>
+            <p><strong>Группа:</strong> <span id="modalGroup"></span></p>
+        </div>        
     </div>
 </div>
 {% endblock %}

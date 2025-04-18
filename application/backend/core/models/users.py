@@ -9,6 +9,8 @@ class User(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True, unique=True)
     username: Mapped[str] = mapped_column(String, unique=True, nullable=False)
+    phone: Mapped[str] = mapped_column(String, unique=True, nullable=False)
+    full_name: Mapped[str] = mapped_column(String, nullable=False)
     hashed_password: Mapped[str] = mapped_column(String, nullable=False)
     is_active: Mapped[bool] = mapped_column(default=True, nullable=False)
     is_superuser: Mapped[bool] = mapped_column(default=False, nullable=False)

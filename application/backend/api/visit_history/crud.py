@@ -15,7 +15,11 @@ async def get_visit_history(session: AsyncSession, offset: int = 0, count: int =
         .options(
             selectinload(VisitHistory.employee),
             selectinload(VisitHistory.object),
-            selectinload(VisitHistory.scanned_by_user)
+            selectinload(VisitHistory.scanned_by_user),
+            selectinload(VisitHistory.employee).selectinload(Employee.object),
+            selectinload(VisitHistory.employee).selectinload(Employee.group),
+            selectinload(VisitHistory.scanned_by_user).selectinload(Employee.object),
+            selectinload(VisitHistory.scanned_by_user).selectinload(Employee.group),
         )
         .offset(offset)
         .limit(count)
@@ -53,9 +57,12 @@ async def get_active_users(session: AsyncSession, object_id: int) -> list[VisitH
     stmt = (
         select(VisitHistory)
         .options(
-            selectinload(VisitHistory.object),
             selectinload(VisitHistory.employee),
-            selectinload(VisitHistory.scanned_by_user)
+            selectinload(VisitHistory.scanned_by_user),
+            selectinload(VisitHistory.employee).selectinload(Employee.object),
+            selectinload(VisitHistory.employee).selectinload(Employee.group),
+            selectinload(VisitHistory.scanned_by_user).selectinload(Employee.object),
+            selectinload(VisitHistory.scanned_by_user).selectinload(Employee.group),
         )
         .filter(
         VisitHistory.object_id == object_id,

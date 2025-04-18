@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     async function getGroups() {
-        searchGroup.innerHTML = '<option value="">Выберите объект...</option>';
+        searchGroup.innerHTML = '<option value="">Выберите группу...</option>';
         try {
             const response = await fetch("/api/groups/");
             if (response.status === 403){

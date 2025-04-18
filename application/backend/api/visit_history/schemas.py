@@ -3,7 +3,7 @@ from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict, field_serializer
 
-from application.backend.api.employees.schemas import EmployeeFullBase
+from application.backend.api.employees.schemas import Employee, EmployeeFullBase
 from application.backend.api.objects.schemas import ObjectBase
 from application.backend.core.models import VisitStatusEnum
 
@@ -23,15 +23,22 @@ class VisitHistory(BaseModel):
     entry_time: datetime
     exit_time: datetime | None
     object: ObjectBase
-    scanned_by_user: EmployeeFullBase
-    employee: EmployeeFullBase
+    employee: Employee
+    scanned_by_user: Employee
     status: VisitStatusEnum
     model_config = ConfigDict(from_attributes=True)
 
+    @field_serializer('entry_time')
+    @field_serializer('exit_time')
+    def serialize_time(self, dt: datetime, _info):
+        return dt.strftime("%Y-%m-%d %H:%M:%S")
+
 class VisitHistoryActive(BaseModel):
+    id: int
     entry_time: datetime
-    scanned_by_user: EmployeeFullBase
-    employee: EmployeeFullBase
+    employee: Employee
+    scanned_by_user: Employee
+    status: VisitStatusEnum
     model_config = ConfigDict(from_attributes=True)
 
     @field_serializer('entry_time')

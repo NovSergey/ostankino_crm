@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Работники - CRM Пропусков{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', path='/table/style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', path='/settings/style.css') }}">
+{% endblock %}
+
+{% block content %}
+<h2 class="title">Настройки</h2>
+
+<div class="tabs">
+    <button class="tab-btn active" data-tab="sanitary">История санитарных разрывов</button>
+    <button class="tab-btn" data-tab="users">Добавить пользователя</button>
+</div>
+
+<!-- Вкладка 1 -->
+<div id="sanitary" class="tab-content active">
+    <div class="subtabs">
+        <button class="subtab-btn active" data-type="main">Основные</button>
+        <button class="subtab-btn" data-type="car">Водители</button>
+        <button class="subtab-btn" data-type="tractor">Трактористы</button>
+    </div>
+    <div class="table-container">
+        <table id="sanitaryTable">
+            <thead>
+                <tr>
+                    <th>Пользователь</th>
+                    <th>Дата</th>
+                    <th>Описание</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Вкладка 2 -->
+<div id="users" class="tab-content">
+    <form id="userForm">
+        <input type="text" id="username" placeholder="Никнейм" required>
+        <input type="text" id="full_name" placeholder="ФИО" required>
+        <input type="tel" id="phone" placeholder="Телефон" required>
+        <input type="text" id="generatedPassword" placeholder="Пароль">
+        <button type="button" onclick="generatePassword()">Сгенерировать пароль</button>
+        <button type="submit">Добавить пользователя</button>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', path='/settings/script.js') }}"></script>
+{% endblock %}

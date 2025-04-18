@@ -1,7 +1,11 @@
+import { openModalEmployee } from '/static/table/script.js';
+import { openModalSecurity } from '/static/table/script.js';
+
 document.addEventListener("DOMContentLoaded", () => {
     const employeeTable = document.getElementById("employeeTable");
     const securityTable = document.getElementById("securityTable");
     const objectStatus = document.getElementById("object-status");
+    const objectTitle = document.getElementById("object-title");
 
     async function getData() {
         try {
@@ -22,6 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function renderPage(data) {
         employeeTable.innerHTML = "";
         securityTable.innerHTML = "";
+        objectTitle.innerHTML = data.object.name;
         objectStatus.innerHTML = data.object.status;
         objectStatus.classList.add(`${data.object.status === 'Открыт'? 'open' : 'close'}`);
 
@@ -31,34 +36,19 @@ document.addEventListener("DOMContentLoaded", () => {
                 <td>${entry.employee.full_name}</td>
                 <td>${entry.entry_time}</td>
             `;
-            row.addEventListener("click", () => openModal(entry));
 
-            if(entry.employee.role == "security")
+            if(entry.employee.role == "security"){
+                row.addEventListener("click", () => openModalSecurity(entry, data.object.name));
                 securityTable.appendChild(row);
-            else
+            }
+            else{                
+                row.addEventListener("click", () => openModalEmployee(entry, data.object.name));
                 employeeTable.appendChild(row);
+            }
 
 
         });
     }
 
-    function openModal(entry) {
-        document.getElementById("modal").style.display = "block";
-
-        document.getElementById("modalEmployeeId").textContent = entry.employee.id;
-        document.getElementById("modalEmployeeName").textContent = entry.employee.full_name;
-        document.getElementById("modalEmployeePhone").textContent = entry.employee.phone;
-        document.getElementById("modalEmployeeTime").textContent = entry.entry_time;
-
-        document.getElementById("modalSecurityId").textContent = entry.scanned_by_user.id;
-        document.getElementById("modalSecurityName").textContent = entry.scanned_by_user.full_name;
-        document.getElementById("modalSecurityPhone").textContent = entry.scanned_by_user.phone;
-    }
-
-    function closeModal() {
-        document.getElementById("modal").style.display = "none";
-    }
-
     getData();
-    window.closeModal = closeModal;
 });

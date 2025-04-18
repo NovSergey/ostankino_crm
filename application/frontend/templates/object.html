@@ -3,55 +3,44 @@
 {% block title %}Объект - CRM Пропусков{% endblock %}
 
 {% block head %}
+<link rel="stylesheet" href="{{ url_for('static', path='/table/style.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', path='/object/style.css') }}">
 {% endblock %}
 
 {% block content %}
-        <div class="object-details">
-            <div class="object-header">
-                <h2 class="object-title">Завод "Северный"</h2>
-                <span class="status" id="object-status"></span>
-            </div>
+<div class="object-details">
+    <div class="object-header">
+        <h2 id="object-title" class="object-title"></h2>
+        <span class="status" id="object-status"></span>
+    </div>
 
-            <h3 class="section-title">Сотрудники на дежурстве</h3>
-            <table class="employee-table" id="securityTable">
-                <thead>
-                    <tr>
-                        <th>ФИО</th>
-                        <th>Время начала дежурства</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
+    <h3 class="section-title">Сотрудники на дежурстве</h3>
+    <table class="employee-table">
+        <thead>
+            <tr>
+                <th>ФИО</th>
+                <th>Время начала дежурства</th>
+            </tr>
+        </thead>
+        <tbody id="securityTable"></tbody>
+    </table>
 
-            <h3 class="section-title">Активные работники</h3>
-            <table class="employee-table" id="employeeTable">
-                <thead>
-                    <tr>
-                        <th>ФИО</th>
-                        <th>Время входа</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </div>
-        <div id="modal" class="modal">
-            <div class="modal-content">
-                <span class="close" onclick="closeModal()">&times;</span>
-                <h3>Детали записи</h3>
-                <p><strong>ID:</strong> <span id="modalEmployeeId"></span></p>
-                <p><strong>ФИО:</strong> <span id="modalEmployeeName"></span></p>
-                <p><strong>Телефон:</strong> <span id="modalEmployeePhone"></span></p>
-                <p><strong>Время входа:</strong> <span id="modalEmployeeTime"></span></p>
-                <h4>Охраник</h4>
-                <p><strong>ID:</strong> <span id="modalSecurityId"></span></p>
-                <p><strong>ФИО:</strong> <span id="modalSecurityName"></span></p>
-                <p><strong>Телефон:</strong> <span id="modalSecurityPhone"></span></p>
-            </div>
-        </div>
+    <h3 class="section-title">Активные работники</h3>
+    <table class="employee-table">
+        <thead>
+            <tr>
+                <th>ФИО</th>
+                <th>Время входа</th>
+            </tr>
+        </thead>
+        <tbody id="employeeTable"></tbody>
+    </table>
+</div>
+
+{% include "visit_table_modal.html" %}
 {% endblock %}
 
 {% block scripts %}
 <script>const CURRENT_OBJECT = {{ object_id }}</script>
-<script src="{{ url_for('static', path='/object/script.js') }}"></script>
+<script type="module" src="{{ url_for('static', path='/object/script.js') }}"></script>
 {% endblock %}

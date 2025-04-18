@@ -5,7 +5,7 @@ from starlette import status
 from application.backend.core import db_helper
 from . import crud
 from .dependencies import check_current_user
-from .schemas import UserOut, UserBase
+from .schemas import UserOut, UserBase, UserLogin
 from application.backend.core.config import security, auth_config
 
 router = APIRouter(tags=["Users"])
@@ -20,7 +20,7 @@ async def register_user(user_in: UserBase, session: AsyncSession = Depends(db_he
 
 
 @router.post("/login")
-async def user_login(creds: UserBase, response: Response,
+async def user_login(creds: UserLogin, response: Response,
                      session: AsyncSession = Depends(db_helper.session_dependency)):
     user = await crud.authenticate_user(session, creds)
     if user:

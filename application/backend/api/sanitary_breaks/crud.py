@@ -3,7 +3,7 @@ from sqlalchemy import select, exists
 from sqlalchemy.engine import Result
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from application.backend.api.sanitary_breaks.schemas import SanitaryBreakBase
+from .schemas import SanitaryBreakBase
 from application.backend.core.models import SanitaryBreak, SanitaryTypeEnum, SanitaryChange, Object
 
 
@@ -57,7 +57,7 @@ async def update_get_sanitary_breaks(
     await session.commit()
 
     sanitary_change = SanitaryChange(
-        sanitary_object_id=sanitary_update.id,
+        sanitary_break_id=sanitary_update.id,
         time_from=old_time,
         time_to=sanitary_update.time_break,
         user_id=user_id,

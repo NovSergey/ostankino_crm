@@ -61,8 +61,16 @@ document.addEventListener("DOMContentLoaded", () => {
             objects.forEach(toObj => {
                 const cell = document.createElement('td');
                 const key = `${fromObj.id}_${toObj.id}`;
-                cell.textContent = tableData[key] || '';
-                cell.dataset.key = key;
+            
+                if (fromObj.id === toObj.id) {
+                    cell.textContent = '—';
+                    cell.classList.add('disabled-cell');
+                    cell.dataset.disabled = 'true';
+                } else {
+                    cell.textContent = tableData[key] || '';
+                    cell.dataset.key = key;
+                }
+            
                 row.appendChild(cell);
             });
 
@@ -83,6 +91,8 @@ document.addEventListener("DOMContentLoaded", () => {
             saveBtn.style.display = 'inline-block';
 
             cells.forEach(cell => {
+                if (cell.dataset.disabled === 'true') return;
+                
                 const value = cell.textContent.trim();
                 const input = document.createElement('input');
                 input.type = 'number';

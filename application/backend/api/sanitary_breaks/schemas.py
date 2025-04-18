@@ -9,3 +9,15 @@ class SanitaryBreakBase(BaseModel):
     object_to_id: int
     time_break: int
     model_config = ConfigDict(from_attributes=True)
+
+class SanitaryBreak(BaseModel):
+    id: int
+    object_from: Object
+    object_to: Object
+    time_break: int
+    sanitary_type: SanitaryTypeEnum
+    model_config = ConfigDict(from_attributes=True)
+
+class SanitaryBreakObjectInfo(BaseModel):
+    object_from: Object
+    object_to: Object
