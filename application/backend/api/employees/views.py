@@ -70,3 +70,11 @@ async def delete_employee(
         session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> None:
     await crud.delete_employee(session=session, employee=employee)
+
+
+@router.post("/restore/{employee_id}/")
+async def restore_employee(
+        employee: Employee = Depends(employee_by_id),
+        session: AsyncSession = Depends(db_helper.session_dependency),
+) -> None:
+    await crud.restore_employee(session=session, employee=employee)

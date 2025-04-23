@@ -30,3 +30,5 @@ class Employee(Base):
 
     group_id: Mapped[int] = mapped_column(ForeignKey("groups.id"), nullable=True)
     group: Mapped["Group"] = relationship()
+
+    is_deleted: Mapped[bool] = mapped_column(nullable=False, default=False)

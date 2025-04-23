@@ -22,6 +22,36 @@ document.addEventListener("DOMContentLoaded", async () => {
     const tabButtons = document.querySelectorAll('.tab-btn');
     const tabContents = document.querySelectorAll('.tab-content');
 
+    const editBtn = document.getElementById("editAccountBtn");
+    const saveBtn = document.getElementById("saveAccountBtn");
+    const cancelBtn = document.getElementById("cancelEditBtn");
+    const passwordlBtn = document.getElementById("changePasswordBtn");
+    const inputs = document.querySelectorAll("#accountForm input");
+
+    let originalValues = {};
+
+    editBtn.addEventListener("click", () => {
+        inputs.forEach(input => {
+            originalValues[input.id] = input.value;
+            input.disabled = false;
+        });
+        editBtn.style.display = "none";
+        passwordlBtn.style.display = "none";
+        saveBtn.style.display = "inline-flex";
+        cancelBtn.style.display = "inline-flex";
+    });
+
+    cancelBtn.addEventListener("click", () => {
+        inputs.forEach(input => {
+            input.value = originalValues[input.id];
+            input.disabled = true;
+        });
+        editBtn.style.display = "inline-flex";
+        passwordlBtn.style.display = "inline-flex";
+        saveBtn.style.display = "none";
+        cancelBtn.style.display = "none";
+    });
+
     function activateTab(tabId) {
         tabButtons.forEach(btn => {
             const isActive = btn.getAttribute('data-tab') === tabId;
@@ -83,17 +113,17 @@ function fillSanitaryTable(type) {
 
 function generatePassword() {
     const password = Math.random().toString(36).slice(-8);
-    document.getElementById("generatedPassword").value = password;
+    document.getElementById("addGeneratedPassword").value = password;
 }
 
 
-document.getElementById("userForm").addEventListener("submit", async function(e) {
+document.getElementById("addUserForm").addEventListener("submit", async function(e) {
     e.preventDefault();
     const userData = {
-        "username": document.getElementById("username").value,
-        "full_name": document.getElementById("full_name").value,
-        "phone": document.getElementById("phone").value,
-        "password": document.getElementById("generatedPassword").value,
+        "username": document.getElementById("addUsername").value,
+        "full_name": document.getElementById("addFullName").value,
+        "phone": document.getElementById("addPhone").value,
+        "password": document.getElementById("addGeneratedPassword").value,
     }
     console.log(userData);
     try {
@@ -103,11 +133,89 @@ document.getElementById("userForm").addEventListener("submit", async function(e)
             body: JSON.stringify(userData)
         });
 
-        if (!res.ok) throw new Error("Ошибка при добавлении пользователя");
+        if (!res.ok) throw new Error("Ошибка при добавлении пользователя" + await res.text());
 
         alert("Пользователь добавлен");
-        document.getElementById("generatedPassword").value = "";
+        document.getElementById("addGeneratedPassword").value = "";
     } catch (err) {
         alert("Ошибка: " + err.message);
     }
+});
+
+
+document.getElementById('passwordModal').style.display = 'none';
+
+document.getElementById('editAccountBtn').addEventListener('click', () => {
+    ['accountUsername', 'accountFullName', 'accountPhone'].forEach(id => {
+        document.getElementById(id).disabled = false;
+    });
+    document.getElementById('saveAccountBtn').style.display = 'inline-block';
+});
+
+document.getElementById('saveAccountBtn').addEventListener('click', async () => {
+    const userData = {
+        "username": document.getElementById("accountUsername").value,
+        "full_name": document.getElementById("accountFullName").value,
+        "phone": document.getElementById("accountPhone").value,
+    }
+    const response = await fetch(`/api/users/${userData["username"]}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(userData)
+    });
+    if (!response.ok) {
+        if(response.status === 403)
+            window.location.href = '/';
+        else
+            alert("Ошибка при изменении данных");
+    }
+    window.location.reload();
+});
+
+
+document.getElementById('changePasswordBtn').addEventListener('click', () => {
+    document.getElementById('passwordModal').style.display = 'flex';
+});
+
+document.getElementById('closeModal').addEventListener('click', () => {
+    document.getElementById('passwordModal').style.display = 'none';
+});
+
+
+document.getElementById('passwordForm').addEventListener('submit', async function(event) {
+    event.preventDefault();
+    
+    const username = document.getElementById('accountUsername').value;
+    const password = document.getElementById('currentPassword').value;
+    const new_password = document.getElementById('newPassword').value;
+    const confirm_password = document.getElementById('confirmPassword').value;
+    if (new_password != confirm_password){
+        alert('Пароли различаются');
+        return;
+    }
+    try {
+        const response = await fetch('/api/users/change_password', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                "username": username,
+                "password": password,
+                "new_password": new_password
+            })
+        });
+
+        if (response.ok) {
+            alert("Успешно")
+            document.getElementById('passwordModal').style.display = 'none';
+        } else {
+            console.error('Ошибка входа:', response.statusText);
+            alert('Ошибка смены пароля. Проверьте пароль.');
+        }
+    } catch (error) {
+        console.error('Ошибка:', error);
+        alert('Произошла ошибка при смене пароля.');
+    }
+    document.getElementById('passwordForm').reset();
 });

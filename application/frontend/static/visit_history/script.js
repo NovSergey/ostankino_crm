@@ -5,8 +5,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const searchObject = document.getElementById("searchObject");
     const tableBody = document.getElementById("tableBody");
 
+
+    let offset = 0;
+    const limit = 100;
+    let loading = false;
+    let hasMore = true;
+
     function renderTable(data) {
-        tableBody.innerHTML = "";
         data.forEach(entry => {
             let row = document.createElement("tr");
             row.innerHTML = `
@@ -31,7 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async function getData() {
         try {
-            const response = await fetch("/api/visit_history/");
+            const response = await fetch(`/api/visit_history?offset=${offset}&count=${limit}`);
             if (response.status === 403){
                 window.location.href = '/';
             }
@@ -40,11 +45,78 @@ document.addEventListener("DOMContentLoaded", () => {
             }
             const data = await response.json();
             renderTable(data);
+            return data.length;
         } catch (error) {
             console.error("Ошибка загрузки данных:", error);
         }
     }
 
+    async function searchData(full_name, object_id) {
+        try {
+            const response = await fetch(`/api/visit_history/search?offset=${offset}&count=${limit}&full_name=${encodeURIComponent(full_name)}&${object_id != "" ? "object_id="+object_id:""}`);
+            if (!response.ok){
+                console.log(full_name);
+                console.error(await response.text());
+                if (response.status === 403){
+                    window.location.href = '/';
+                }
+                else if (response.status === 401){
+                    window.location.href = '/login'
+                }
+            }
+            const data = await response.json();
+            renderTable(data);
+            return data.length;
+        } catch (error) {
+            console.error("Ошибка поиска:", error);
+        }
+    }
+
+
+    async function loadEmployees(reset = false) {
+        if (loading || (!hasMore && !reset)) return;
+
+        loading = true;
+
+        if (reset) {
+            offset = 0;
+            hasMore = true;
+            tableBody.innerHTML = "";
+        }
+
+        const nameValue = searchName.value.trim();
+        const objectId = searchObject.value.trim();
+
+        let data_count = 0;
+        if (nameValue || objectId) {
+            data_count = await searchData(nameValue, objectId);
+        } else {
+            data_count = await getData();
+        }
+        offset += data_count;
+        if (data_count < limit) {
+            hasMore = false;
+        }
+        loading = false;
+        
+    }
+    
+    async function filterTable() {
+        tableBody.innerHTML = "";
+        offset = 0;
+        hasMore = true;
+        loading = false;
+        let nameValue = searchName.value.trim();
+        let groupId = searchObject.value.trim();
+        let data_count = await searchData(nameValue, groupId);
+        offset += data_count;
+        if (data_count < limit) {
+            hasMore = false;
+        }
+        loading = false;
+    }
+
+    
     async function getObjects() {
         searchObject.innerHTML = '<option value="">Выберите объект...</option>';
         try {
@@ -62,37 +134,20 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch (error) {
             console.error("Ошибка загрузки объектов:", error);
         }
-        searchObject.innerHTML += '<option value="-1">Не установлено</option>';
     }
 
-    async function searchData(full_name, group_id) {
-        try {
-            const response = await fetch(`/api/employees/search?full_name=${encodeURIComponent(full_name)}&${group_id != "" ? "group_id="+group_id:""}`);
-            if (!response.ok){
-                console.log(full_name);
-                console.error(await response.text());
-                if (response.status === 403){
-                    window.location.href = '/';
-                }
-                else if (response.status === 401){
-                    window.location.href = '/login'
-                }
-            }
-            const data = await response.json();
-            renderTable(data);
-        } catch (error) {
-            console.error("Ошибка поиска:", error);
+    window.addEventListener("scroll", async () => {
+        const scrollPosition = window.scrollY + window.innerHeight;
+        const documentHeight = document.documentElement.scrollHeight;
+
+        if (scrollPosition >= documentHeight - 100 && !loading) {
+            await loadEmployees(false);
         }
-    }
+    });
 
-    async function filterTable() {
-        let nameValue = searchName.value.trim();
-        let groupId = searchGroup.value.trim();
-        await searchData(nameValue, groupId);
-    }
     searchName.addEventListener("input", filterTable);
     searchObject.addEventListener("input", filterTable);
 
-    getData();
+    loadEmployees(true);
     getObjects();
 });

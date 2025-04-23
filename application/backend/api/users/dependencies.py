@@ -1,32 +1,30 @@
 from authx.schema import TokenPayload
 from fastapi import Depends, HTTPException
-from fastapi.responses import RedirectResponse
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
 from .crud import get_user_by_username
-from application.backend.core.models import User
 from application.backend.core.config import security
 from application.backend.core import db_helper
+from application.backend.api.exceptions import RedirectException
 
 
 async def check_user_permissions(session: AsyncSession, token_data: TokenPayload, need_superuser, redirect=False):
     username = token_data.sub
     if not username:
         if redirect:
-            return RedirectResponse(url="/login")
+            raise RedirectException("/login")
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
 
     user = await get_user_by_username(session, username)
     if not user or not user.is_active:
         if redirect:
-            return RedirectResponse(url="/login")
+            raise RedirectException("/login")
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Unactive account")
 
     if not user.is_superuser and need_superuser:
         if redirect:
-            return RedirectResponse(url="/")
+            raise RedirectException("/")
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not enough permissions")
     return user
 

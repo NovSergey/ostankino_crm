@@ -20,6 +20,16 @@ class UserOut(BaseModel):
     class Config:
         from_attributes = True
 
+class UserEdit(BaseModel):
+    username: str | None = None
+    full_name: str | None = None
+    phone: str | None = None
+
 class UserLogin(BaseModel):
     username: str
     password: str
+
+class UserChangePassword(BaseModel):
+    username: str
+    password: str
+    new_password: str

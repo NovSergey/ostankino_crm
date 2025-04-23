@@ -34,4 +34,5 @@ class Employee(BaseModel):
     role: RoleEnum
     group: Group | None
     object: Object | None
+    is_deleted: bool
     model_config = ConfigDict(from_attributes=True)

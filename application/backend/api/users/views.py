@@ -3,10 +3,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
 from application.backend.core import db_helper
+from application.backend.core.models import User
 from . import crud
 from .dependencies import check_current_user
-from .schemas import UserOut, UserBase, UserLogin
-from application.backend.core.config import security, auth_config
+from .schemas import UserOut, UserBase, UserLogin, UserEdit, UserChangePassword
+from application.backend.core.config import security
 
 router = APIRouter(tags=["Users"])
 
@@ -30,6 +31,22 @@ async def user_login(creds: UserLogin, response: Response,
     raise HTTPException(status_code=401, detail="Incorrect username or password")
 
 
+@router.put("/{username}")
+async def user_delete(
+        username: str,
+        change_info: UserEdit,
+        session: AsyncSession = Depends(db_helper.session_dependency),
+        user_jwt: User = Depends(check_current_user()),
+):
+    if not (user_jwt.username == username or user_jwt.is_superuser):
+        raise HTTPException(status_code=403, detail="Access denied")
+
+    user = await crud.edit_user(session, username, change_info)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return {"result": "ok"}
+
+
 @router.delete("/{username}", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(check_current_user(True))])
 async def user_delete(
         username: str,
@@ -38,6 +55,17 @@ async def user_delete(
     deleted = await crud.delete_user(session, username)
     if not deleted:
         raise HTTPException(status_code=404, detail="User not found")
+
+
+@router.post("/change_password", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(check_current_user(True))])
+async def change_password(
+        creds: UserChangePassword,
+        session: AsyncSession = Depends(db_helper.session_dependency)
+):
+    user = await crud.change_password_user(session, creds)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return {"result": "ok"}
 
 
 @router.get("/logout")

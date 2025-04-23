@@ -18,6 +18,7 @@ async def get_sanitary_changes(session: AsyncSession, sanitary_type: SanitaryTyp
 
         )
         .where(SanitaryBreak.sanitary_type == sanitary_type)
+        .order_by(SanitaryChange.id)
     )
     result: Result = await session.execute(stmt)
     return list(result.scalars().all())

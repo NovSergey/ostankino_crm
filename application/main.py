@@ -8,6 +8,7 @@ import uvicorn
 from starlette import status
 
 from application.backend.api import router as router_backend
+from application.backend.api.exceptions import RedirectException
 from application.frontend.routers import router as router_frontend
 from application.frontend.config import settings as settings_frontend
 
@@ -34,6 +35,10 @@ async def exception_token_handler(request: Request, exc: AuthXException):
         status_code=status.HTTP_401_UNAUTHORIZED,
         content={"detail": "Invalid authentication token"},
     )
+
+@app.exception_handler(RedirectException)
+async def exception_redirect_handler(request: Request, exc: RedirectException):
+    return RedirectResponse(url=exc.url)
 
 
 if __name__ == "__main__":

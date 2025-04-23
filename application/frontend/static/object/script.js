@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
         securityTable.innerHTML = "";
         objectTitle.innerHTML = data.object.name;
         objectStatus.innerHTML = data.object.status;
-        objectStatus.classList.add(`${data.object.status === 'Открыт'? 'open' : 'close'}`);
+        objectStatus.classList.add(`${data.object.status === 'Открыт'? 'open' : 'close_'}`);
 
         data.history.forEach(entry => {
             let row = document.createElement("tr");

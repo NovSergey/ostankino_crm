@@ -1,9 +1,11 @@
 from fastapi import APIRouter, Request
+from fastapi import Depends
 from fastapi.templating import Jinja2Templates
 
+from application.backend.api.users.dependencies import jwt_required_redirect
 from application.frontend.config import settings
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(jwt_required_redirect())])
 templates = Jinja2Templates(directory=settings.templates_folder)
 
 
