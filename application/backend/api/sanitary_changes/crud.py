@@ -1,5 +1,5 @@
 from fastapi import HTTPException, status
-from sqlalchemy import select, exists
+from sqlalchemy import select, exists, desc
 from sqlalchemy.engine import Result
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
@@ -7,7 +7,7 @@ from sqlalchemy.orm import selectinload
 from application.backend.core.models import SanitaryChange, SanitaryTypeEnum, SanitaryBreak
 
 
-async def get_sanitary_changes(session: AsyncSession, sanitary_type: SanitaryTypeEnum) -> list[SanitaryChange]:
+async def get_sanitary_changes(session: AsyncSession, sanitary_type: SanitaryTypeEnum, offset: int = 0, count: int = 0) -> list[SanitaryChange]:
     stmt = (
         select(SanitaryChange)
         .join(SanitaryChange.sanitary_break)
@@ -18,7 +18,9 @@ async def get_sanitary_changes(session: AsyncSession, sanitary_type: SanitaryTyp
 
         )
         .where(SanitaryBreak.sanitary_type == sanitary_type)
-        .order_by(SanitaryChange.id)
+        .offset(offset)
+        .limit(count)
+        .order_by(desc(SanitaryChange.time_changed))
     )
     result: Result = await session.execute(stmt)
     return list(result.scalars().all())

@@ -1,4 +1,4 @@
-from sqlalchemy import select
+from sqlalchemy import select, desc
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -22,6 +22,6 @@ async def visit_history_search(full_name: str | None, object_id: int | None, ses
             stmt = stmt.where(VisitHistory.object_id.is_(None))
         else:
             stmt = stmt.where(VisitHistory.object_id == object_id)
-    stmt = stmt.offset(offset).limit(count).order_by(VisitHistory.id)
+    stmt = stmt.offset(offset).limit(count).order_by(desc(VisitHistory.id))
     result = await session.execute(stmt)
     return list(result.scalars().all())

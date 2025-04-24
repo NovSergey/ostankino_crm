@@ -2,7 +2,7 @@ import uuid
 from typing import Annotated
 
 from fastapi import Path, Depends, HTTPException, status
-from sqlalchemy import select
+from sqlalchemy import select, desc
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -33,6 +33,6 @@ async def employee_search(full_name: str | None, group_id: int | None, session: 
             stmt = stmt.where(Employee.group_id.is_(None))  # Ищем сотрудников без позиции
         else:
             stmt = stmt.where(Employee.group_id == group_id)
-    stmt = stmt.offset(offset).limit(count).order_by(Employee.id)
+    stmt = stmt.offset(offset).limit(count).order_by(desc(Employee.id))
     result = await session.execute(stmt)
     return list(result.scalars().all())

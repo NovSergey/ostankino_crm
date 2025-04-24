@@ -12,7 +12,7 @@ function toggleMenu() {
 
 document.querySelectorAll('.dropdown-toggle').forEach(item => {
     item.addEventListener('click', (e) => {
-        if (window.innerWidth <= 768) {
+        if (window.innerWidth <= 1024) {
             e.preventDefault();
             const parent = item.parentElement;
             const isActive = parent.classList.contains('active');

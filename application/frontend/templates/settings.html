@@ -13,8 +13,8 @@
 <div class="tabs">
     <button class="tab-btn active" data-tab="sanitary">История санитарных разрывов</button>
     {% if user.is_superuser %}
-    <button class="tab-btn" data-tab="add_user">Добавить пользователя</button>
     <button class="tab-btn" data-tab="users">Пользователи</button> 
+    <button class="tab-btn" data-tab="add_user">Добавить пользователя</button>
     {% endif %}
     <button class="tab-btn" data-tab="account">Аккаунт</button>
 </div>
@@ -30,6 +30,7 @@
         <table id="sanitaryTable">
             <thead>
                 <tr>
+                    <th>Id</th>
                     <th>Пользователь</th>
                     <th>Дата</th>
                     <th>Описание</th>
@@ -41,7 +42,25 @@
 </div>
 
 {% if user.is_superuser %}
+<!-- Вкладка 2 -->
+<div id="users" class="tab-content">
+    <div class="table-container">
+        <table id="usersTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Никнейм</th>
+                    <th>ФИО</th>
+                    <th class="hide-on-small">Телефон</th>
+                    <th class="hide-on-small">Админ</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
 
+<!-- Вкладка 3 -->
 <div id="add_user" class="tab-content">
     <form id="addUserForm" class="add-user-form">
         <h3 class="section-title">Добавление пользователя</h3>
@@ -59,10 +78,10 @@
         </div>
         <div class="input-wrapper">
             <i class="fas fa-lock"></i>
-            <input type="text" id="addGeneratedPassword" placeholder="Пароль">
+            <input type="text" id="addGeneratedPassword" placeholder="Пароль" required>
         </div>
         <div class="form-actions center">
-            <button type="button" onclick="generatePassword()"  class="btn primary">
+            <button type="button" onclick="generatePassword()"  class="btn warning">
                 <i class="fas fa-random"></i> Сгенерировать пароль
             </button>
             <button type="submit" class="btn primary">
@@ -70,27 +89,6 @@
             </button>
         </div>
     </form>
-</div>
-{% endif %}
-
-{% if user.is_superuser %}
-
-<!-- Вкладка 3 -->
-<div id="users" class="tab-content">
-    <div class="table-container">
-        <table id="usersTable">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Никнейм</th>
-                    <th>ФИО</th>
-                    <th>Телефон</th>
-                    <th>Админ</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-    </div>
 </div>
 {% endif %}
 
@@ -132,23 +130,63 @@
 </div>
 
 
+
+
+<!-- Модальное разрывов -->
+<div id="breaksModal" class="modal">
+    <div class="modal-content">
+        <span class="close" id="closeBreaksModal" >&times;</span>
+        <div class="modal-body">
+            <h3>Детали записи</h3>
+            <p><strong>ID:</strong> <span id="modalBreakId"></span></p>
+            <p><strong>Пользователь:</strong> <span id="modalBreakUser"></span></p>
+            <p><strong>Дата:</strong> <span id="modalBreakDate"></span></p>
+            <p><strong>Описание</strong> <span id="modalBreakAction"></span></p>
+        </div>    
+    </div>
+</div>
+
+
+
+<!-- Модальное пользователей -->
+<div id="usersModal" class="modal">
+    <div class="modal-content">
+        <span class="close" id="closeUsersModal" >&times;</span>
+        <div class="modal-body">
+            <h3>Детали записи</h3>
+            <p><strong>ID:</strong> <span id="modalUserId"></span></p>
+            <p><strong>Никнейм:</strong> <span id="modalUserNickname"></span></p>
+            <p><strong>ФИО:</strong> <span id="modalUserFullName"></span></p>
+            <p><strong>Телефон:</strong> <span id="modalUserPhone"></span></p>
+            <p><strong>Админ:</strong> <span id="modalUserSuperuser"></span></p>
+        </div>    
+    </div>
+</div>
+
+
 <!-- Модальное окно смены пароля -->
 <div id="passwordModal" class="modal-password">
     <div class="modal-content-password">
         <span class="close" id="closeModal">&times;</span>
         <h3 class="modal-title-password">Смена пароля</h3>
         <form id="passwordForm">
-            <div class="input-wrapper">
-                <label for="currentPassword">Текущий пароль</label>
-                <input type="password" id="currentPassword" required>
+            <div class="input-wrapper">             
+                <input type="password" id="currentPassword" placeholder="Текущий пароль" required>
+                <span class="password-toggle" onclick="togglePassword(this)">
+                    <i class="fas fa-eye"></i>
+                </span>
             </div>
             <div class="input-wrapper">
-                <label for="newPassword">Новый пароль</label>
-                <input type="password" id="newPassword" required>
+                <input type="password" id="newPassword" placeholder="Новый пароль" required>
+                <span class="password-toggle" onclick="togglePassword(this)">
+                    <i class="fas fa-eye"></i>
+                </span>
             </div>
             <div class="input-wrapper">
-                <label for="confirmPassword">Подтвердите пароль</label>
-                <input type="password" id="confirmPassword" required>
+                <input type="password" id="confirmPassword" placeholder="Подтвердите пароль" required>
+                <span class="password-toggle" onclick="togglePassword(this)">
+                    <i class="fas fa-eye"></i>
+                </span>
             </div>
             <div class="form-actions center">
                 <button type="submit" class="btn success">
@@ -158,53 +196,6 @@
         </form>
     </div>
 </div>
-
-
-<!-- <div id="account" class="tab-content">
-    <div class="form-row">
-        <div class="input-group">
-            <i class="fas fa-user"></i>
-            <input type="text" id="account_username" value="{{ user.username }}" disabled>
-        </div>
-        <div class="input-group">
-            <i class="fas fa-id-card"></i>
-            <input type="text" id="account_fullname" value="{{ user.full_name }}" disabled>
-        </div>
-        <div class="input-group">
-            <i class="fas fa-phone"></i>
-            <input type="tel" id="account_phone" value="{{ user.phone }}" disabled>
-        </div>
-
-        <div class="form-actions">
-            <button type="submit" onclick="openPasswordModal()"><i class="fas fa-key"></i> Сменить пароль</button>
-        </div>
-    </div>
-</div> -->
-
-
-<!-- <div id="passwordModal" class="modal-overlay">
-    <div class="modal-window">
-        <h3>Смена пароля</h3>
-        <form id="passwordForm">
-            <div class="input-group">
-                <i class="fas fa-lock"></i>
-                <input type="password" id="newPassword" placeholder="Новый пароль" required>
-            </div>
-            <div class="input-group">
-                <i class="fas fa-lock"></i>
-                <input type="password" id="confirmPassword" placeholder="Подтвердите пароль" required>
-            </div>
-            <div class="form-actions">
-                <button type="submit" class="submit-btn">
-                    <i class="fas fa-key"></i> Обновить пароль
-                </button>
-                <button type="button" class="cancel-btn" onclick="closePasswordModal()">
-                    Отмена
-                </button>
-            </div>
-        </form>
-    </div>
-</div> -->
 
 {% endblock %}
 

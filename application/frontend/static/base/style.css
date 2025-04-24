@@ -93,13 +93,13 @@ body {
     to { width: 60% }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
     .dropdown:hover .dropdown-menu {
         display: block; /* Отключаем hover для мобильных */
     }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
     .hamburger {
         display: block;
     }

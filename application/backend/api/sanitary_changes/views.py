@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from application.backend.core import db_helper
@@ -14,6 +14,8 @@ router = APIRouter(tags=["Sanitary Changes"])
 @router.get("/{sanitary_type}", response_model=list[SanitaryChangeBase], dependencies=[Depends(check_current_user())])
 async def get_sanitary_breaks(
         sanitary_type: SanitaryTypeEnum,
+        offset: int = Query(0, ge=0),
+        count: int = Query(100, le=100),
         session: AsyncSession = Depends(db_helper.session_dependency),
 ):
-    return await crud.get_sanitary_changes(session=session, sanitary_type=sanitary_type)
+    return await crud.get_sanitary_changes(session=session, sanitary_type=sanitary_type, offset=offset, count=count)

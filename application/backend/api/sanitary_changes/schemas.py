@@ -7,6 +7,7 @@ from application.backend.api.users.schemas import UserOut
 
 
 class SanitaryChangeBase(BaseModel):
+    id: int
     user: UserOut
     sanitary_break: SanitaryBreakObjectInfo
     time_changed: datetime

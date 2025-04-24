@@ -1,7 +1,7 @@
 from uuid import UUID
 
 from fastapi import HTTPException
-from sqlalchemy import select
+from sqlalchemy import select, desc
 from sqlalchemy.engine import Result
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
@@ -21,7 +21,7 @@ async def get_employees(session: AsyncSession, offset: int = 0, count: int = 0) 
         .where(Employee.is_deleted == False)
         .offset(offset)
         .limit(count)
-        .order_by(Employee.id)
+        .order_by(desc(Employee.id))
     )
     result: Result = await session.execute(stmt)
     employees = result.scalars().all()

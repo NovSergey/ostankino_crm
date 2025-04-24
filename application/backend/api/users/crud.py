@@ -1,10 +1,22 @@
 from fastapi import HTTPException
-from sqlalchemy import select
+from sqlalchemy import select, Result, desc
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from application.backend.core.models import User
 
 from .schemas import UserBase, UserEdit, UserChangePassword
+
+
+async def get_users(session: AsyncSession, offset: int = 0, count: int = 0) -> list[User]:
+    stmt = (
+        select(User)
+        .where(User.is_active == True)
+        .offset(offset)
+        .limit(count)
+        .order_by(desc(User.id))
+    )
+    result: Result = await session.execute(stmt)
+    return list(result.scalars().all())
 
 
 async def get_user_by_username(session: AsyncSession, username: str) -> User | None:
@@ -30,6 +42,7 @@ async def create_user(session: AsyncSession, user: UserBase) -> User:
 async def authenticate_user(session: AsyncSession, user: UserBase) -> User | None:
     user_exist = await get_user_by_username(session, user.username)
     if user_exist and user_exist.check_password(user.password) and user_exist.is_active:
+        print("good")
         return user_exist
     return None
 
@@ -42,6 +55,7 @@ async def delete_user(session: AsyncSession, username: str) -> bool:
     await session.commit()
     return True
 
+
 async def edit_user(session: AsyncSession, username: str, user_edit: UserEdit) -> bool:
     user = await get_user_by_username(session, username)
     if not user:
@@ -50,6 +64,7 @@ async def edit_user(session: AsyncSession, username: str, user_edit: UserEdit) -
         setattr(user, name, value)
     await session.commit()
     return True
+
 
 async def change_password_user(session: AsyncSession, user_change: UserChangePassword) -> bool:
     user = await get_user_by_username(session, user_change.username)

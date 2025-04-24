@@ -1,6 +1,6 @@
-from fastapi import APIRouter, HTTPException, Response, Depends
+from fastapi import APIRouter, HTTPException, Response, Depends, status, Query
+from fastapi.responses import RedirectResponse
 from sqlalchemy.ext.asyncio import AsyncSession
-from starlette import status
 
 from application.backend.core import db_helper
 from application.backend.core.models import User
@@ -11,6 +11,13 @@ from application.backend.core.config import security
 
 router = APIRouter(tags=["Users"])
 
+@router.get("/", response_model=list[UserOut], dependencies=[Depends(check_current_user(True))])
+async def get_users(
+        offset: int = Query(0, ge=0),
+        count: int = Query(100, le=100),
+        session: AsyncSession = Depends(db_helper.session_dependency)
+):
+    return await crud.get_users(session, offset, count)
 
 @router.post("/register", response_model=UserOut, dependencies=[Depends(check_current_user(True))])
 async def register_user(user_in: UserBase, session: AsyncSession = Depends(db_helper.session_dependency)):
@@ -69,6 +76,7 @@ async def change_password(
 
 
 @router.get("/logout")
-async def logout(response: Response):
+async def logout():
+    response = RedirectResponse(url="/", status_code=302)
     security.unset_access_cookies(response)
-    return "ok"
+    return response

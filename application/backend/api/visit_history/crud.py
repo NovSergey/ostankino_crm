@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from fastapi import HTTPException, status
-from sqlalchemy import select
+from sqlalchemy import select, desc
 from sqlalchemy.engine import Result
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
@@ -23,7 +23,7 @@ async def get_visit_history(session: AsyncSession, offset: int = 0, count: int =
         )
         .offset(offset)
         .limit(count)
-        .order_by(VisitHistory.entry_time)
+        .order_by(desc(VisitHistory.entry_time))
     )
     result: Result = await session.execute(stmt)
     return list(result.scalars().all())
