@@ -7,6 +7,12 @@ const selects = form.querySelectorAll('select');
 
 const restoreBtn = document.getElementById('restore-btn');
 const deleteBtn = document.getElementById('delete-btn');
+var phoneMask = document.getElementById('phone');
+if(phoneMask){
+    phoneMask = IMask(phoneMask, {
+        mask: '+{7} (000) 000-00-00'
+    });
+}
 
 function changeActive(active){
     inputs.forEach(input => input.disabled = active);
@@ -42,14 +48,13 @@ form.addEventListener('submit', async (e) => {
             id = input.value;
     });
     selects.forEach(input => data[input.name] = input.value == "" ? null : input.value);
-
+    data['phone'] = phoneMask.unmaskedValue;
     try{
         const response = await fetch(`/api/employees/${id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
         });
-        console.log(data);
         if(!response.ok){
             if (response.status === 403){
                 window.location.href = '/';

@@ -1,7 +1,12 @@
 const form = document.getElementById('employee-form');
 const inputs = form.querySelectorAll('input');
 const selects = form.querySelectorAll('select');
-
+var phoneMask = document.getElementById('phone');
+if(phoneMask){
+    phoneMask = IMask(phoneMask, {
+        mask: '+{7} (000) 000-00-00'
+    });
+}
 
 form.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -10,7 +15,7 @@ form.addEventListener('submit', async (e) => {
         data[input.name] = input.value;
     });
     selects.forEach(input => data[input.name] = input.value == "" ? null : input.value);
-
+    data['phone'] = phoneMask.unmaskedValue;
     try{
         console.log(data);
         const response = await fetch(`/api/employees/`, {

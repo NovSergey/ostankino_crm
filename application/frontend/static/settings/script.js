@@ -309,6 +309,12 @@ const tabs = {
     add_user: {
         init() {
             this.setupForm();
+            this.addPhoneMask = document.getElementById('addPhone');
+            if(this.addPhoneMask){
+                this.addPhoneMask = IMask(this.addPhoneMask, {
+                    mask: '+{7} (000) 000-00-00'
+                });
+            }
         },
         setupForm() {
             const form = document.getElementById('addUserForm');
@@ -318,7 +324,7 @@ const tabs = {
                     const userData = {
                         username: document.getElementById('addUsername').value,
                         full_name: document.getElementById('addFullName').value,
-                        phone: document.getElementById('addPhone').value,
+                        phone: this.addPhoneMask.unmaskedValue,
                         password: document.getElementById('addGeneratedPassword').value
                     };
                     try {
@@ -327,9 +333,12 @@ const tabs = {
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify(userData)
                         });
-                        if (!res.ok) throw new Error('Ошибка при добавлении пользователя: ' + await res.text());
+                        if (!res.ok){
+                            alert('Ошибка: ' + await res.text());
+                            return;
+                        }
                         alert('Пользователь добавлен');
-                        document.getElementById('addGeneratedPassword').value = '';
+                        form.reset();
                     } catch (err) {
                         alert('Ошибка: ' + err.message);
                     }
@@ -341,6 +350,12 @@ const tabs = {
         init() {
             this.setupForm();
             this.setupPasswordModal();
+            this.accountPhoneMask = document.getElementById('accountPhone');
+            if(this.accountPhoneMask){
+                this.accountPhoneMask = IMask(this.accountPhoneMask, {
+                    mask: '+{7} (000) 000-00-00'
+                });
+            }        
         },
         setupForm() {
             const editBtn = document.getElementById('editAccountBtn');
@@ -375,7 +390,7 @@ const tabs = {
                 const userData = {
                     username: document.getElementById('accountUsername').value,
                     full_name: document.getElementById('accountFullName').value,
-                    phone: document.getElementById('accountPhone').value
+                    phone: this.accountPhoneMask.unmaskedValue
                 };
                 const response = await fetch(`/api/users/${userData.username}`, {
                     method: 'PUT',
@@ -386,7 +401,9 @@ const tabs = {
                     if (response.status === 403) window.location.href = '/';
                     else alert('Ошибка при изменении данных');
                 }
-                window.location.reload();
+                else{
+                    window.location.reload();
+                }
             });
         },
         setupPasswordModal() {
