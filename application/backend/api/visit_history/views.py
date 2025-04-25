@@ -1,3 +1,4 @@
+from datetime import datetime
 from urllib.parse import unquote
 
 from fastapi import APIRouter, Depends, status, Query, HTTPException
@@ -30,16 +31,25 @@ async def create_visit_history(
     return await crud.create_visit_history(session=session, entry=entry)
 
 @router.get("/search", response_model=list[VisitHistory])
-async def search_employees(
+async def search_history(
         full_name: str = Query(""),
         object_id: int = Query(None),
+        start_time: str = Query(None),  # Новый параметр для начальной даты
+        end_time: str = Query(None),
         offset: int = Query(0, ge=0),
         count: int = Query(100, le=100),
         session: AsyncSession = Depends(db_helper.session_dependency)
 ):
+    try:
+        start_time_dt = datetime.strptime(start_time, "%d-%m-%Y") if start_time else None
+        end_time_dt = datetime.strptime(end_time, "%d-%m-%Y") if end_time else None
+    except ValueError:
+        raise HTTPException(status_code=422, detail="Invalid date format. Use DD-MM-YYYY (e.g., 26-04-2025).")
     return await visit_history_search(
         full_name=unquote(full_name),
         object_id=object_id,
+        start_time=start_time_dt,
+        end_time=end_time_dt,
         session=session,
         offset=offset,
         count=count

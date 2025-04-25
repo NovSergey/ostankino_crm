@@ -21,50 +21,141 @@ const tabs = {
         hasMore: { main: true, car: true, tractor: true },
         loading: false,
         activeSubtab: 'main',
+
         async init() {
             this.setupSubtabs();
-            await this.loadData(this.activeSubtab, true);
+            await this.loadData(true);
+            await this.getObjects();
 
             document.getElementById("closeBreaksModal").addEventListener('click', () => {
                 this.closeModal();
             });
 
-            window.closeModal = closeModal;
+            picker.on('selected', () => {
+                this.filterTable();
+            });
+        
+            document.addEventListener('datesCleared', ()=>{
+                this.filterTable();
+            })
+            document.getElementById("searchObjectFirst").addEventListener("input", function() {
+                this.filterTable();
+            }.bind(this));
+            
+            document.getElementById("searchObjectSecond").addEventListener("input", function() {
+                this.filterTable();
+            }.bind(this));
+            
+            window.closeModal = this.closeModal.bind(this);
         },
-        async loadData(type, reset = false) {
-            if (this.loading || (!this.hasMore[type] && !reset)) return;
+
+        async getData(){
+            try {
+                const response = await fetch(`/api/sanitary_changes/${this.activeSubtab}?offset=${this.offset[this.activeSubtab]}&count=${this.limit}`);
+                if (response.status === 403){
+                    window.location.href = '/';
+                }
+                else if (response.status === 401){
+                    window.location.href = '/login'
+                }
+                const newData = await response.json();
+                return newData
+            } catch (error) {
+                console.error("Ошибка загрузки данных:", error);
+            }
+            return []
+        },
+        async searchData(object_from_id, object_to_id, start_time, end_time) {
+            try {
+                const params = {
+                    offset: this.offset[this.activeSubtab],
+                    count: this.limit,
+                    ...(object_from_id && { object_from_id }),
+                    ...(object_to_id && { object_to_id }),
+                    ...(start_time && { start_time }),
+                    ...(end_time && { end_time }),
+                  };
+                console.log(params);
+                const queryString = new URLSearchParams(params).toString();
+                const response = await fetch(`/api/sanitary_changes/search/${this.activeSubtab}?${queryString}`);
+                if (!response.ok){
+                    console.error(await response.text());
+                    if (response.status === 403){
+                        window.location.href = '/';
+                    }
+                    else if (response.status === 401){
+                        window.location.href = '/login'
+                    }
+                }
+                const newData = await response.json();
+                return newData;
+            } catch (error) {
+                console.error("Ошибка поиска:", error);
+            }
+            return []
+        },
+        async loadData(reset = false, switch_tab=false) {
+            if(switch_tab){
+                const tbody = document.querySelector('#sanitaryTable tbody');
+                tbody.innerHTML = "";
+                if(this.data[this.activeSubtab].length > 0){
+                    this.fillTable(this.data[this.activeSubtab]);
+                    return
+                }
+            }
+            if (this.loading || (!this.hasMore[this.activeSubtab] && !reset)) return;
 
             this.loading = true;
 
             if (reset) {
-                this.offset[type] = 0;
-                this.hasMore[type] = true;
-                this.data[type] = [];
-                this.fillTable(type);
+                const tbody = document.querySelector('#sanitaryTable tbody');
+                tbody.innerHTML = "";
+                this.offset[this.activeSubtab] = 0;
+                this.hasMore[this.activeSubtab] = true;
+                this.data[this.activeSubtab] = [];
             }
 
-            try {
-                const response = await fetch(`/api/sanitary_changes/${type}?offset=${this.offset[type]}&count=${this.limit}`);
-                if (!response.ok) {
-                    if (response.status === 401) {
-                        window.location.href = '/login';
-                    } else if (response.status === 403) {
-                        window.location.href = '/';
-                    }
-                    throw new Error('Ошибка загрузки данных');
-                }
-                const newData = await response.json();
-                this.data[type].push(...newData);
-                this.offset[type] += newData.length;
-                if (newData.length < this.limit) {
-                    this.hasMore[type] = false;
-                }
-                this.fillTable(type);
-            } catch (error) {
-                console.error(`Ошибка загрузки данных для ${type}:`, error);
-            } finally {
-                this.loading = false;
+            let objectFirst = document.getElementById('searchObjectFirst').value.trim();
+            let objectSecond = document.getElementById('searchObjectSecond').value.trim();
+            let startDate = picker.getStartDate()?.format('DD-MM-YYYY');
+            let endDate = picker.getEndDate()?.format('DD-MM-YYYY');
+
+            let newData;
+            if (objectFirst || objectSecond || startDate || endDate) {
+                newData = await this.searchData(nameValue, objectId, startDate, endDate);
+            } else {
+                newData = await this.getData();
             }
+            this.data[this.activeSubtab].push(...newData);
+            this.offset[this.activeSubtab] += newData.length;
+            this.fillTable(newData);
+            if (newData.length < this.limit) {
+                this.hasMore[this.activeSubtab] = false;
+            }
+            this.loading = false;
+        },
+        async filterTable() {
+            const tbody = document.querySelector('#sanitaryTable tbody');
+            tbody.innerHTML = "";
+
+            this.offset[this.activeSubtab] = 0;
+            this.hasMore[this.activeSubtab] = true;
+            this.loading = false;
+
+            let objectFirst = document.getElementById('searchObjectFirst').value.trim();
+            let objectSecond = document.getElementById('searchObjectSecond').value.trim();
+            let startDate = picker.getStartDate()?.format('DD-MM-YYYY');
+            let endDate = picker.getEndDate()?.format('DD-MM-YYYY');
+            
+            let newData = await this.searchData(objectFirst, objectSecond, startDate, endDate);
+            this.data[this.activeSubtab].push(...newData)
+            this.offset[this.activeSubtab] += newData.length;
+            this.fillTable(newData);
+
+            if (newData.length < this.limit) {
+                this.hasMore[this.activeSubtab] = false;
+            }
+            this.loading = false;
         },
         setupSubtabs() {
             document.querySelectorAll('.subtab-btn').forEach(btn => {
@@ -72,14 +163,13 @@ const tabs = {
                     document.querySelectorAll('.subtab-btn').forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
                     this.activeSubtab = btn.dataset.type;
-                    this.loadData(this.activeSubtab, true);
+                    this.loadData(false, true);
                 });
             });
         },
-        fillTable(type) {
+        fillTable(data) {
             const tbody = document.querySelector('#sanitaryTable tbody');
-            tbody.innerHTML = '';
-            (this.data[type] || []).forEach(row => {
+            data.forEach(row => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td>${row.id}</td>
@@ -104,6 +194,33 @@ const tabs = {
         closeModal() {
             document.body.classList.remove('modal-open');
             document.getElementById("breaksModal").style.display = "none";
+        },
+        async getObjects(){            
+            let objectFirst = document.getElementById('searchObjectFirst');
+            let objectSecond = document.getElementById('searchObjectSecond');
+            
+            objectFirst.innerHTML = '<option value="">Выберите объект 1</option>';
+            objectSecond.innerHTML = '<option value="">Выберите объект 2</option>';
+            try {
+                const response = await fetch("/api/objects/");
+                if (response.status === 401){
+                    window.location.href = '/login'
+                }
+                const objects = await response.json();
+                objects.forEach(object => {
+                    const option = document.createElement("option");
+                    option.value = object.id;
+                    option.textContent = object.name;
+                    objectFirst.appendChild(option);
+
+                    const option2 = document.createElement("option");
+                    option2.value = object.id;
+                    option2.textContent = object.name;
+                    objectSecond.appendChild(option2);
+                });
+            } catch (error) {
+                console.error("Ошибка загрузки объектов:", error);
+            }
         }
     },
     users: {
@@ -376,7 +493,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (scrollPosition >= documentHeight - 100) {
             if (document.querySelector('#sanitary').classList.contains('active') && !tabs.sanitary.loading) {
-                await tabs.sanitary.loadData(tabs.sanitary.activeSubtab, false);
+                await tabs.sanitary.loadData(false);
             } else if (document.querySelector('#users').classList.contains('active') && !tabs.users.loading) {
                 await tabs.users.loadData(false);
             }

@@ -1,6 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
     const searchName = document.getElementById("searchName");
+    const searchPhone = document.getElementById("searchPhone");
     const searchGroup = document.getElementById("searchGroup");
+    const searchObject = document.getElementById("searchObject");
     const tableBody = document.getElementById("tableBody");
 
     let offset = 0;
@@ -26,9 +28,19 @@ document.addEventListener("DOMContentLoaded", () => {
         return 0
     }
 
-    async function searchData(full_name, group_id) {
+    async function searchData(full_name, phone, group_id, object_id) {
         try {
-            const response = await fetch(`/api/employees/search?offset=${offset}&count=${limit}&full_name=${encodeURIComponent(full_name)}&${group_id != "" ? "group_id="+group_id:""}`);
+            const params = {
+                offset: offset,
+                count: limit,
+                full_name: full_name,
+                phone: phone,
+                ...(group_id && { group_id }),
+                ...(object_id && { object_id }),
+              };
+              
+            const queryString = new URLSearchParams(params).toString();
+            const response = await fetch(`/api/employees/search?${queryString}`);
             if (!response.ok){
                 console.error(await response.text());
                 if (response.status === 403){
@@ -59,11 +71,13 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         const nameValue = searchName.value.trim();
+        const phoneValue = searchPhone.value.trim();
         const groupId = searchGroup.value.trim();
+        const objectId = searchObject.value.trim();
 
         let data_count = 0;
-        if (nameValue || groupId) {
-            data_count = await searchData(nameValue, groupId);
+        if (nameValue || phoneValue || groupId || objectId) {
+            data_count = await searchData(nameValue, phoneValue, groupId, objectId);
         } else {
             data_count = await getData();
         }
@@ -76,7 +90,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     async function getGroups() {
-        searchGroup.innerHTML = '<option value="">Выберите группу...</option>';
+        searchGroup.innerHTML = '<option value="">Выберите группу</option>';
         try {
             const response = await fetch("/api/groups/");
             if (response.status === 403){
@@ -96,6 +110,26 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error("Ошибка загрузки объектов:", error);
         }
         searchGroup.innerHTML += '<option value="-1">Не установлено</option>';
+    }
+
+    async function getObjects() {
+        searchObject.innerHTML = '<option value="">Выберите объект</option>';
+        try {
+            const response = await fetch("/api/objects/");
+            if (response.status === 401){
+                window.location.href = '/login'
+            }
+            const objects = await response.json();
+            objects.forEach(object => {
+                const option = document.createElement("option");
+                option.value = object.id;
+                option.textContent = object.name;
+                searchObject.appendChild(option);
+            });
+        } catch (error) {
+            console.error("Ошибка загрузки объектов:", error);
+        }
+        searchObject.innerHTML += '<option value="-1">Не установлено</option>';
     }
 
     function renderTable(data) {
@@ -119,8 +153,11 @@ document.addEventListener("DOMContentLoaded", () => {
         hasMore = true;
         loading = false;
         let nameValue = searchName.value.trim();
+        let phoneValue = searchPhone.value.trim();
         let groupId = searchGroup.value.trim();
-        let data_count = await searchData(nameValue, groupId);
+        let objectId = searchObject.value.trim();
+
+        let data_count = await searchData(nameValue, phoneValue, groupId, objectId);
         offset += data_count;
         if (data_count < limit) {
             hasMore = false;
@@ -155,9 +192,12 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     searchName.addEventListener("input", filterTable);
+    searchPhone.addEventListener("input", filterTable);
     searchGroup.addEventListener("input", filterTable);
+    searchObject.addEventListener("input", filterTable);
 
     loadEmployees(true);
     getGroups();
+    getObjects();
     window.closeModal = closeModal;
 });

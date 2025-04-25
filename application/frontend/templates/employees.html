@@ -4,16 +4,29 @@
 
 {% block head %}
 <link rel="stylesheet" href="{{ url_for('static', path='/table/style.css') }}">
-<link rel="stylesheet" href="{{ url_for('static', path='/employees/style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', path='/filters/style.css') }}">
 {% endblock %}
 
 {% block content %}
 <h2 class="title">Работники</h2>
 
 <div class="controls">
-    <input type="text" id="searchName" placeholder="Поиск по ФИО...">
+    <div class="search-filter">
+        <input class="filter" type="text" id="searchName" placeholder="Поиск по ФИО...">
+    </div>
+    <div class="search-filter">
+        <input class="filter" type="text" id="searchPhone" placeholder="Поиск по телефону...">
+    </div>
+    
     <div class="custom-select-wrapper">
-        <select id="searchGroup" class="custom-select"></select>
+        <select id="searchGroup" class="custom-select filter">
+            <option value="">Выберите группу</option>
+        </select>
+    </div>
+    <div class="custom-select-wrapper">
+        <select id="searchObject" class="custom-select filter">
+            <option value="">Выберите объект</option>
+        </select>
     </div>
 </div>
 

@@ -3,6 +3,7 @@ import { openModalEmployee, openModalSecurity } from '/static/table/script.js';
 document.addEventListener("DOMContentLoaded", () => {
     const searchName = document.getElementById("searchName");
     const searchObject = document.getElementById("searchObject");
+    const searchDate = document.getElementById("datepicker");
     const tableBody = document.getElementById("tableBody");
 
 
@@ -10,6 +11,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const limit = 100;
     let loading = false;
     let hasMore = true;
+
+    document.querySelectorAll('.fake-placeholder-input input[type="date"]').forEach(input => {
+        input.addEventListener('input', () => {
+            input.classList.toggle('has-value', !!input.value);
+        });
+    });
 
     function renderTable(data) {
         data.forEach(entry => {
@@ -51,9 +58,19 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    async function searchData(full_name, object_id) {
+    async function searchData(full_name, object_id, start_time, end_time) {
         try {
-            const response = await fetch(`/api/visit_history/search?offset=${offset}&count=${limit}&full_name=${encodeURIComponent(full_name)}&${object_id != "" ? "object_id="+object_id:""}`);
+            const params = {
+                offset: offset,
+                count: limit,
+                full_name: full_name,
+                ...(object_id && { object_id }),
+                ...(start_time && { start_time }),
+                ...(end_time && { end_time }),
+              };
+              
+            const queryString = new URLSearchParams(params).toString();
+            const response = await fetch(`/api/visit_history/search?${queryString}`);
             if (!response.ok){
                 console.log(full_name);
                 console.error(await response.text());
@@ -86,10 +103,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const nameValue = searchName.value.trim();
         const objectId = searchObject.value.trim();
+        const startDate = picker.getStartDate()?.format('DD-MM-YYYY');
+        const endDate = picker.getEndDate()?.format('DD-MM-YYYY');
 
         let data_count = 0;
-        if (nameValue || objectId) {
-            data_count = await searchData(nameValue, objectId);
+        if (nameValue || objectId || startDate || endDate) {
+            data_count = await searchData(nameValue, objectId, startDate, endDate);
         } else {
             data_count = await getData();
         }
@@ -108,7 +127,10 @@ document.addEventListener("DOMContentLoaded", () => {
         loading = false;
         let nameValue = searchName.value.trim();
         let groupId = searchObject.value.trim();
-        let data_count = await searchData(nameValue, groupId);
+        let startDate = picker.getStartDate()?.format('DD-MM-YYYY');
+        let endDate = picker.getEndDate()?.format('DD-MM-YYYY');
+
+        let data_count = await searchData(nameValue, groupId, startDate, endDate);
         offset += data_count;
         if (data_count < limit) {
             hasMore = false;
@@ -118,7 +140,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     
     async function getObjects() {
-        searchObject.innerHTML = '<option value="">Выберите объект...</option>';
+        searchObject.innerHTML = '<option value="">Выберите объект</option>';
         try {
             const response = await fetch("/api/objects/");
             if (response.status === 401){
@@ -147,7 +169,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     searchName.addEventListener("input", filterTable);
     searchObject.addEventListener("input", filterTable);
+    
+    picker.on('selected', () => {
+        filterTable();
+    });
+
+    document.addEventListener('datesCleared', ()=>{
+        filterTable();
+    })
+
 
     loadEmployees(true);
     getObjects();
 });
+

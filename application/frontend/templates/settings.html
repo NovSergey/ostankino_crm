@@ -5,6 +5,7 @@
 {% block head %}
 <link rel="stylesheet" href="{{ url_for('static', path='/table/style.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', path='/settings/style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', path='/filters/style.css') }}">
 {% endblock %}
 
 {% block content %}
@@ -26,6 +27,16 @@
         <button class="subtab-btn" data-type="car">Водители</button>
         <button class="subtab-btn" data-type="tractor">Трактористы</button>
     </div>
+    <div class="controls">
+        <div class="custom-select-wrapper">
+            <select id="searchObjectFirst" class="custom-select filter"></select>
+        </div>
+        <div class="custom-select-wrapper">
+            <select id="searchObjectSecond" class="custom-select filter"></select>
+        </div>
+        {% include "calendar.html" %}
+    </div>
+
     <div class="table-container">
         <table id="sanitaryTable">
             <thead>

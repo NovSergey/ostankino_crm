@@ -19,21 +19,38 @@
     margin: 0;
 }
 
+.table-section {
+    margin: 1rem 0;
+}
+
 .section-title {
     color: #333;
-    margin: 2rem 0 1rem;
+    margin: 0;
+    padding: 0.5rem 1rem;
     border-bottom: 2px solid #007bff;
-    padding-bottom: 0.5rem;
+    cursor: pointer;
+    font-size: 1.25rem;
+    font-weight: 600;
+    transition: background-color 0.2s;
+}
+
+.table-section[open] .section-title {
+    background-color: #f8f9fa;
+}
+
+.employee-table {
+    margin-top: 1rem;
+    width: 100%;
+    border-collapse: collapse;
 }
 
 .status.open {
-  color: #155724;
+    color: #28a745;
 }
 
 .status.close_ {
-  color: #721c24;
+    color: #dc3545;
 }
-
 
 @media (max-width: 768px) {
     .object-details {
@@ -44,10 +61,19 @@
         flex-direction: column;
         align-items: flex-start;
     }
+
+    .section-title {
+        font-size: 1.1rem;
+        padding: 0.5rem;
+    }
 }
 
 @media (max-width: 480px) {
     .info-card {
         padding: 0.8rem;
+    }
+
+    .section-title {
+        font-size: 1rem;
     }
 }

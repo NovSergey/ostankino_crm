@@ -1,0 +1,118 @@
+.controls {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.filter {
+    min-width: 200px;
+    min-height: 39px;
+}
+
+.search-filter,
+.select-filters,
+.date-filter {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.search-filter input,
+.custom-select,
+.date-filter input {
+    padding: 10px;
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px; /* Ensure readability on mobile */
+    box-sizing: border-box;
+}
+
+.search-filter input:focus,
+.custom-select:focus,
+.date-filter input:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+.custom-select-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.custom-select {
+    appearance: none;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12"><path fill="%23333" d="M2 4l4 4 4-4z"/></svg>') no-repeat right 10px center;
+    background-size: 12px;
+    cursor: pointer;
+}
+
+.date-filter {
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.date-filter input {
+    flex: 1;
+    min-width: 0; /* Prevent overflow on small screens */
+}
+
+/* Tablet and larger screens */
+@media (min-width: 1080px) {
+    .controls {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+
+    .search-filter,
+    .select-filters,
+    .date-filter {
+        flex: 1;
+        min-width: 200px; /* Prevent elements from becoming too narrow */
+    }
+
+    .select-filters {
+        flex-direction: row;
+        gap: 16px;
+    }
+
+    .custom-select-wrapper {
+        flex: 1;
+    }
+
+    .date-filter {
+        flex-direction: row;
+        gap: 16px;
+    }
+
+    button {
+        width: auto; /* Allow button to size naturally */
+    }
+}
+
+@media (min-width: 900px) {
+    .controls {
+        flex-wrap: nowrap;
+    }
+
+    .search-filter,
+    .select-filters,
+    .date-filter {
+        flex: 0 1 auto;
+    }
+
+    .search-filter {
+        flex: 1;
+    }
+
+    .select-filters {
+        flex: 0 1 40%;
+    }
+
+    .date-filter {
+        flex: 0 1 30%;
+    }
+}
+

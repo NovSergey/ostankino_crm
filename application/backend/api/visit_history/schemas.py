@@ -31,7 +31,7 @@ class VisitHistory(BaseModel):
     @field_serializer('entry_time')
     @field_serializer('exit_time')
     def serialize_time(self, dt: datetime, _info):
-        return dt.strftime("%Y-%m-%d %H:%M:%S")
+        return dt.strftime("%d-%m-%Y %H:%M:%S")
 
 class VisitHistoryActive(BaseModel):
     id: int
@@ -43,7 +43,7 @@ class VisitHistoryActive(BaseModel):
 
     @field_serializer('entry_time')
     def serialize_time(self, dt: datetime, _info):
-        return dt.strftime("%Y-%m-%d %H:%M:%S")
+        return dt.strftime("%d-%m-%Y %H:%M:%S")
 
 class VisitHistoryActiveResponse(BaseModel):
     object: ObjectBase

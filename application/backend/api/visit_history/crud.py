@@ -44,9 +44,13 @@ async def create_visit_history(session: AsyncSession, entry: VisitHistoryCreate)
     result = await session.execute(
         select(VisitHistory)
         .options(
-            selectinload(VisitHistory.object),
             selectinload(VisitHistory.employee),
+            selectinload(VisitHistory.object),
             selectinload(VisitHistory.scanned_by_user),
+            selectinload(VisitHistory.employee).selectinload(Employee.object),
+            selectinload(VisitHistory.employee).selectinload(Employee.group),
+            selectinload(VisitHistory.scanned_by_user).selectinload(Employee.object),
+            selectinload(VisitHistory.scanned_by_user).selectinload(Employee.group),
         )
         .where(VisitHistory.id == entry_created.id)
     )

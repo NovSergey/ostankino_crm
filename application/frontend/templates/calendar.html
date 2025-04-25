@@ -1,0 +1,107 @@
+<link rel="stylesheet" href="{{ url_for('static', path='/filters/litepicker.css') }}" />
+
+<style>
+    .litepicker {
+        border-radius: 12px !important;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        z-index: 999 !important;
+    }
+    .litepicker .container__months {
+        -webkit-box-shadow: none;
+        border-radius: 0px;
+        background-color: #f9f9f9;
+    }
+    .litepicker {
+        color: #333; /* тёмные тексты */
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .litepicker .day-item {
+        color: #444;
+    }
+
+    .litepicker .day-item.selected {
+        background-color: #4a90e2;
+        color: #fff;
+    }
+
+    .clear-button-wrapper {
+        padding: 10px;
+        border-top: 1px solid #e0e0e0;
+        background-color: #f9f9f9;
+        display: flex;
+        justify-content: center;
+    }
+    .clear-button {
+        padding: 6px 16px;
+        border: 1px solid #ccc;
+        background-color: #f5f5f5;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+</style>
+<div class="date-filter">
+    <input type="text" id="datepicker" placeholder="Выберите период" inputmode="none" readonly/>
+</div>
+
+<script src="{{ url_for('static', path='/filters/litepicker.js') }}"></script>
+<script>
+    const picker = new Litepicker({
+      element: document.getElementById('datepicker'),
+      singleMode: false,
+      format: 'DD-MM-YYYY',
+      lang: 'ru', // ВАЖНО: установить язык
+      tooltipText: {
+        one: 'день',
+        few: 'дня',
+        many: 'дней',
+        other: 'дней'
+      },
+      dropdowns: {
+        minYear: 2000,
+        maxYear: null,
+        months: true,
+        years: true
+      }
+    });
+
+    const targetNode = document.querySelector('.litepicker');
+
+    const observer = new MutationObserver(() => {
+        const pickerRoot = document.querySelector('.litepicker');
+        if (!pickerRoot) return;
+
+        const alreadyExists = pickerRoot.querySelector('.clear-button-wrapper');
+        if (alreadyExists && pickerRoot.lastElementChild !== alreadyExists) {
+            pickerRoot.appendChild(alreadyExists); // Перемещаем в конец, если кто-то вставился после
+            return;
+        }
+
+        if (alreadyExists) return;
+
+        const wrapper = document.createElement('div');
+        wrapper.className = 'clear-button-wrapper';
+
+
+        const button = document.createElement('button');
+        button.textContent = 'Очистить';
+        button.className = 'clear-button';
+
+        button.onclick = () => {
+            picker.clearSelection();
+            picker.hide();
+            document.getElementById('datepicker').value = '';
+            document.dispatchEvent(new Event('datesCleared'));
+        };
+
+        wrapper.appendChild(button);
+        pickerRoot.appendChild(wrapper);
+    });
+
+    // Запускаем наблюдение
+    observer.observe(targetNode, { childList: true, subtree: true });
+
+</script>

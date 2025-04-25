@@ -37,14 +37,18 @@ async def get_employee(employee: Employee = Depends(employee_by_id)):
 @router.get("/search", response_model=list[Employee])
 async def search_employees(
         full_name: str = Query(""),
+        phone: str = Query(""),
         group_id: int = Query(None),
+        object_id: int = Query(None),
         offset: int = Query(0, ge=0),
         count: int = Query(100, le=100),
         session: AsyncSession = Depends(db_helper.session_dependency)
 ):
     return await employee_search(
         full_name=unquote(full_name),
+        phone=unquote(phone),
         group_id=group_id,
+        object_id=object_id,
         session=session,
         offset=offset,
         count=count

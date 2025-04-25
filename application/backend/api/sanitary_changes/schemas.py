@@ -17,4 +17,4 @@ class SanitaryChangeBase(BaseModel):
 
     @field_serializer('time_changed')
     def serialize_time(self, dt: datetime, _info):
-        return dt.strftime("%Y-%m-%d %H:%M:%S")
+        return dt.strftime("%d-%m-%Y %H:%M:%S")
