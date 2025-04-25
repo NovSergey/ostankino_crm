@@ -20,6 +20,16 @@ templates = Jinja2Templates(directory=settings.templates_folder)
 async def get_employees_page(request: Request):
     return templates.TemplateResponse(name="employees.html", request=request)
 
+@router.get("/add")
+async def get_employee_page(request: Request, session = Depends(db_helper.session_dependency)):
+    objects = await get_objects(session)
+    groups = await get_groups(session)
+    return templates.TemplateResponse("employee_add.html", {
+        "request": request,
+        "groups": groups,
+        "objects": objects
+    })
+
 @router.get("/{employee_id}")
 async def get_employee_page(request: Request, session = Depends(db_helper.session_dependency), employee: Employee = Depends(employee_by_id)):
     employee = Employee.from_orm(employee)
@@ -31,3 +41,6 @@ async def get_employee_page(request: Request, session = Depends(db_helper.sessio
         "groups": groups,
         "objects": objects
     })
+
+
+

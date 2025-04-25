@@ -3,6 +3,7 @@
 {% block title %}Работники - CRM Пропусков{% endblock %}
 
 {% block head %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <link rel="stylesheet" href="{{ url_for('static', path='/table/style.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', path='/filters/style.css') }}">
 {% endblock %}
@@ -11,6 +12,9 @@
 <h2 class="title">Работники</h2>
 
 <div class="controls">
+    <div class="actions">
+        <button class="btn-primary" onclick="window.location.href = '/employees/add'"><i class="fa-solid fa-user-plus"></i> Добавить работника</button>
+    </div>
     <div class="search-filter">
         <input class="filter" type="text" id="searchName" placeholder="Поиск по ФИО...">
     </div>
@@ -28,6 +32,7 @@
             <option value="">Выберите объект</option>
         </select>
     </div>
+
 </div>
 
 <div class="table-container">
