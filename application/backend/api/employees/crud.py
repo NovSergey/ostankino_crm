@@ -11,7 +11,7 @@ from application.backend.core.models import Employee, Group, Object
 from .schemas import EmployeeCreate, EmployeeUpdate
 
 
-async def get_employees(session: AsyncSession, offset: int = 0, count: int = 0) -> list[Employee]:
+async def get_employees(session: AsyncSession, offset: int = 0, count: int = 100) -> list[Employee]:
     stmt = (
         select(Employee)
         .options(

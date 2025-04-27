@@ -1,9 +1,16 @@
 document.addEventListener("DOMContentLoaded", () => {
     const searchName = document.getElementById("searchName");
-    const searchPhone = document.getElementById("searchPhone");
     const searchGroup = document.getElementById("searchGroup");
     const searchObject = document.getElementById("searchObject");
     const tableBody = document.getElementById("tableBody");
+
+    var searchPhone = document.getElementById('searchPhone');
+    var searchPhoneMask;
+    if(searchPhone){
+        searchPhoneMask = IMask(searchPhone, {
+            mask: '+{7} (000) 000-00-00'
+        });
+    }
 
     let offset = 0;
     const limit = 100;
@@ -71,7 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         const nameValue = searchName.value.trim();
-        const phoneValue = searchPhone.value.trim();
+        const phoneValue = searchPhoneMask.unmaskedValue;
         const groupId = searchGroup.value.trim();
         const objectId = searchObject.value.trim();
 
@@ -153,7 +160,7 @@ document.addEventListener("DOMContentLoaded", () => {
         hasMore = true;
         loading = false;
         let nameValue = searchName.value.trim();
-        let phoneValue = searchPhone.value.trim();
+        let phoneValue = searchPhoneMask.unmaskedValue;
         let groupId = searchGroup.value.trim();
         let objectId = searchObject.value.trim();
 

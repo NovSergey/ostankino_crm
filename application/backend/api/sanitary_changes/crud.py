@@ -7,7 +7,7 @@ from sqlalchemy.orm import selectinload
 from application.backend.core.models import SanitaryChange, SanitaryTypeEnum, SanitaryBreak
 
 
-async def get_sanitary_changes(session: AsyncSession, sanitary_type: SanitaryTypeEnum, offset: int = 0, count: int = 0) -> list[SanitaryChange]:
+async def get_sanitary_changes(session: AsyncSession, sanitary_type: SanitaryTypeEnum, offset: int = 0, count: int = 100) -> list[SanitaryChange]:
     stmt = (
         select(SanitaryChange)
         .join(SanitaryChange.sanitary_break)

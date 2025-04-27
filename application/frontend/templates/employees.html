@@ -19,7 +19,7 @@
         <input class="filter" type="text" id="searchName" placeholder="Поиск по ФИО...">
     </div>
     <div class="search-filter">
-        <input class="filter" type="text" id="searchPhone" placeholder="Поиск по телефону...">
+        <input class="filter" type="tel" id="searchPhone" placeholder="Поиск по телефону...">
     </div>
     
     <div class="custom-select-wrapper">
@@ -67,5 +67,6 @@
 {% endblock %}
 
 {% block scripts %}
+<script src="{{ url_for('static', path='/base/imask.min.js') }}"></script>
 <script src="{{ url_for('static', path='/employees/script.js') }}"></script>
 {% endblock %}

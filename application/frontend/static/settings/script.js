@@ -15,18 +15,22 @@ function togglePassword(e) {
 
 const tabs = {
     sanitary: {
-        data: { main: [], car: [], tractor: [] },
-        offset: { main: 0, car: 0, tractor: 0 },
+        offset: 0,
         limit: 100,
-        hasMore: { main: true, car: true, tractor: true },
+        hasMore: true,
         loading: false,
         activeSubtab: 'main',
+        objectFirst: document.getElementById('searchObjectFirst'),
+        objectSecond: document.getElementById('searchObjectSecond'),
 
         async init() {
             this.setupSubtabs();
+
+
+
             await this.loadData(true);
             await this.getObjects();
-
+            
             document.getElementById("closeBreaksModal").addEventListener('click', () => {
                 this.closeModal();
             });
@@ -38,11 +42,11 @@ const tabs = {
             document.addEventListener('datesCleared', ()=>{
                 this.filterTable();
             })
-            document.getElementById("searchObjectFirst").addEventListener("input", function() {
+            this.objectFirst.addEventListener("input", function() {
                 this.filterTable();
             }.bind(this));
             
-            document.getElementById("searchObjectSecond").addEventListener("input", function() {
+            this.objectSecond.addEventListener("input", function() {
                 this.filterTable();
             }.bind(this));
             
@@ -51,7 +55,7 @@ const tabs = {
 
         async getData(){
             try {
-                const response = await fetch(`/api/sanitary_changes/${this.activeSubtab}?offset=${this.offset[this.activeSubtab]}&count=${this.limit}`);
+                const response = await fetch(`/api/sanitary_changes/${this.activeSubtab}?offset=${this.offset}&count=${this.limit}`);
                 if (response.status === 403){
                     window.location.href = '/';
                 }
@@ -68,14 +72,13 @@ const tabs = {
         async searchData(object_from_id, object_to_id, start_time, end_time) {
             try {
                 const params = {
-                    offset: this.offset[this.activeSubtab],
+                    offset: this.offset,
                     count: this.limit,
                     ...(object_from_id && { object_from_id }),
                     ...(object_to_id && { object_to_id }),
                     ...(start_time && { start_time }),
                     ...(end_time && { end_time }),
                   };
-                console.log(params);
                 const queryString = new URLSearchParams(params).toString();
                 const response = await fetch(`/api/sanitary_changes/search/${this.activeSubtab}?${queryString}`);
                 if (!response.ok){
@@ -94,43 +97,33 @@ const tabs = {
             }
             return []
         },
-        async loadData(reset = false, switch_tab=false) {
-            if(switch_tab){
-                const tbody = document.querySelector('#sanitaryTable tbody');
-                tbody.innerHTML = "";
-                if(this.data[this.activeSubtab].length > 0){
-                    this.fillTable(this.data[this.activeSubtab]);
-                    return
-                }
-            }
-            if (this.loading || (!this.hasMore[this.activeSubtab] && !reset)) return;
+        async loadData(reset = false) {
+            if (this.loading || (!this.hasMore && !reset)) return;
 
             this.loading = true;
 
             if (reset) {
                 const tbody = document.querySelector('#sanitaryTable tbody');
                 tbody.innerHTML = "";
-                this.offset[this.activeSubtab] = 0;
-                this.hasMore[this.activeSubtab] = true;
-                this.data[this.activeSubtab] = [];
+                this.offset = 0;
+                this.hasMore = true;
             }
 
-            let objectFirst = document.getElementById('searchObjectFirst').value.trim();
-            let objectSecond = document.getElementById('searchObjectSecond').value.trim();
+            let objectFirst_value = this.objectFirst.value.trim();
+            let objectSecond_value = this.objectSecond.value.trim();
             let startDate = picker.getStartDate()?.format('DD-MM-YYYY');
             let endDate = picker.getEndDate()?.format('DD-MM-YYYY');
 
             let newData;
-            if (objectFirst || objectSecond || startDate || endDate) {
-                newData = await this.searchData(nameValue, objectId, startDate, endDate);
+            if (objectFirst_value || this.objectSecond_value || startDate || endDate) {
+                newData = await this.searchData(objectFirst_value, objectSecond_value, startDate, endDate);
             } else {
                 newData = await this.getData();
             }
-            this.data[this.activeSubtab].push(...newData);
-            this.offset[this.activeSubtab] += newData.length;
+            this.offset += newData.length;
             this.fillTable(newData);
             if (newData.length < this.limit) {
-                this.hasMore[this.activeSubtab] = false;
+                this.hasMore = false;
             }
             this.loading = false;
         },
@@ -138,22 +131,21 @@ const tabs = {
             const tbody = document.querySelector('#sanitaryTable tbody');
             tbody.innerHTML = "";
 
-            this.offset[this.activeSubtab] = 0;
-            this.hasMore[this.activeSubtab] = true;
+            this.offset = 0;
+            this.hasMore = true;
             this.loading = false;
 
-            let objectFirst = document.getElementById('searchObjectFirst').value.trim();
-            let objectSecond = document.getElementById('searchObjectSecond').value.trim();
+            let objectFirst_value = this.objectFirst.value.trim();
+            let objectSecond_value = this.objectSecond.value.trim();
             let startDate = picker.getStartDate()?.format('DD-MM-YYYY');
             let endDate = picker.getEndDate()?.format('DD-MM-YYYY');
             
-            let newData = await this.searchData(objectFirst, objectSecond, startDate, endDate);
-            this.data[this.activeSubtab].push(...newData)
-            this.offset[this.activeSubtab] += newData.length;
+            let newData = await this.searchData(objectFirst_value, objectSecond_value, startDate, endDate);
+            this.offset += newData.length;
             this.fillTable(newData);
 
             if (newData.length < this.limit) {
-                this.hasMore[this.activeSubtab] = false;
+                this.hasMore = false;
             }
             this.loading = false;
         },
@@ -163,7 +155,7 @@ const tabs = {
                     document.querySelectorAll('.subtab-btn').forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
                     this.activeSubtab = btn.dataset.type;
-                    this.loadData(false, true);
+                    this.loadData(true);
                 });
             });
         },
@@ -196,11 +188,9 @@ const tabs = {
             document.getElementById("breaksModal").style.display = "none";
         },
         async getObjects(){            
-            let objectFirst = document.getElementById('searchObjectFirst');
-            let objectSecond = document.getElementById('searchObjectSecond');
-            
-            objectFirst.innerHTML = '<option value="">Выберите объект 1</option>';
-            objectSecond.innerHTML = '<option value="">Выберите объект 2</option>';
+          
+            this.objectFirst.innerHTML = '<option value="">Выберите объект 1</option>';
+            this.objectSecond.innerHTML = '<option value="">Выберите объект 2</option>';
             try {
                 const response = await fetch("/api/objects/");
                 if (response.status === 401){
@@ -211,12 +201,12 @@ const tabs = {
                     const option = document.createElement("option");
                     option.value = object.id;
                     option.textContent = object.name;
-                    objectFirst.appendChild(option);
+                    this.objectFirst.appendChild(option);
 
                     const option2 = document.createElement("option");
                     option2.value = object.id;
                     option2.textContent = object.name;
-                    objectSecond.appendChild(option2);
+                    this.objectSecond.appendChild(option2);
                 });
             } catch (error) {
                 console.error("Ошибка загрузки объектов:", error);

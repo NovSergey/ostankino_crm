@@ -7,7 +7,7 @@ from application.backend.core.models import User
 from .schemas import UserBase, UserEdit, UserChangePassword
 
 
-async def get_users(session: AsyncSession, offset: int = 0, count: int = 0) -> list[User]:
+async def get_users(session: AsyncSession, offset: int = 0, count: int = 100) -> list[User]:
     stmt = (
         select(User)
         .where(User.is_active == True)
