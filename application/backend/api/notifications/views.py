@@ -26,10 +26,3 @@ async def get_notifications(
         session: AsyncSession = Depends(db_helper.session_dependency)
 ):
     return await crud.read_notification(session, notification_id)
-
-@router.post("/read/{notification_id}")
-async def get_notifications(
-        notification_id: int,
-        session: AsyncSession = Depends(db_helper.session_dependency)
-):
-    return await crud.read_notification(session, notification_id)

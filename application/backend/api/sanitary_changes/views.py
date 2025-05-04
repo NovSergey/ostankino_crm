@@ -20,8 +20,7 @@ async def get_sanitary_breaks(
         offset: int = Query(0, ge=0),
         count: int = Query(100, le=100),
         session: AsyncSession = Depends(db_helper.session_dependency),
-):
-    return await crud.get_sanitary_changes(session=session, sanitary_type=sanitary_type, offset=offset, count=count)
+):    return await crud.get_sanitary_changes(session=session, sanitary_type=sanitary_type, offset=offset, count=count)
 
 
 @router.get("/search/{sanitary_type}", response_model=list[SanitaryChangeBase])
