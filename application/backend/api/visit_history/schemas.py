@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime
 
-from pydantic import BaseModel, ConfigDict, field_serializer
+from pydantic import BaseModel, ConfigDict
 
 from application.backend.api.employees.schemas import Employee
 from application.backend.api.general_schemas.base import CustomBaseModel

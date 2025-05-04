@@ -10,7 +10,8 @@ __all__ = (
     "VisitHistory",
     "User",
     "SanitaryBreak",
-    "SanitaryChange"
+    "SanitaryChange",
+    "Notification"
 )
 
 from .base import Base
@@ -21,4 +22,5 @@ from .visit_history import VisitHistory, VisitStatusEnum
 from .users import User
 from .sanitary_breaks import SanitaryBreak, SanitaryTypeEnum
 from .sanitary_changes import SanitaryChange
+from .notifications import Notification
 

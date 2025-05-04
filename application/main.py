@@ -9,7 +9,7 @@ from starlette import status
 
 from application.backend.api import router as router_backend
 from application.backend.api.exceptions import RedirectException
-from application.backend.api.visit_history.dependencies import check_unfinished_visits_and_notify
+from application.backend.utils.notification_utils import check_unfinished_visits_and_notify
 from application.frontend.routers import router as router_frontend
 from application.frontend.config import settings as settings_frontend
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
@@ -18,9 +18,9 @@ scheduler = AsyncIOScheduler()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # scheduler.add_job(check_unfinished_visits_and_notify, "cron", hour=18, minutes=0)  # каждый день в 18:00
-    # scheduler.add_job(check_unfinished_visits_and_notify, "interval", seconds=10)
-    # scheduler.start()
+    scheduler.add_job(check_unfinished_visits_and_notify, "cron", hour=20, minute=26)  # каждый день в 18:00
+    #scheduler.add_job(check_unfinished_visits_and_notify, "interval", seconds=10)
+    scheduler.start()
     yield
 
 

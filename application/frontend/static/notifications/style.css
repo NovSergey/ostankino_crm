@@ -1,5 +1,16 @@
+.notifications-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 1rem 1.5rem;
+    gap: 1rem;
+}
+
 .notifications-container {
-    padding: 1.5rem;
+    padding: 1rem 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 .notification-list {
@@ -15,7 +26,7 @@
     padding: 1rem;
     margin-bottom: 1rem;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     transition: all 0.3s ease;
 }
 
@@ -28,16 +39,19 @@
     font-size: 1.5rem;
     color: #007bff;
     margin-right: 1rem;
+    flex-shrink: 0;
 }
 
 .notification-content {
     flex: 1;
+    overflow-wrap: break-word;
 }
 
 .notification-title {
     font-weight: bold;
     margin: 0 0 0.5rem;
     color: #333;
+    font-size: 1rem;
 }
 
 .notification-message {
@@ -54,19 +68,36 @@
 
 .notification-actions {
     margin-left: 1rem;
+    flex-shrink: 0;
 }
 
 .notification-actions button {
-    background: none;
+    background-color: #2b7cff;
+    color: #fff;
     border: none;
-    color: #007bff;
+    padding: 6px 12px;
+    border-radius: 5px;
     cursor: pointer;
     font-size: 0.9rem;
-    transition: color 0.3s;
+    transition: background-color 0.3s;
 }
 
 .notification-actions button:hover {
-    color: #0056b3;
+    background-color: #1a5edb;
+}
+
+.toggle-read {
+    padding: 8px 16px;
+    background-color: #e0e0e0;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s;
+}
+
+.toggle-read:hover {
+    background-color: #d0d0d0;
 }
 
 .no-notifications {
@@ -76,18 +107,65 @@
     padding: 2rem;
 }
 
+/* Responsive Design */
 @media (max-width: 768px) {
-    .notification-item {
+    .notifications-header {
         flex-direction: column;
         align-items: flex-start;
     }
 
+    .notification-item {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 0.75rem;
+    }
+
     .notification-icon {
         margin-bottom: 0.5rem;
+        margin-right: 0;
     }
 
     .notification-actions {
         margin-left: 0;
-        margin-top: 0.5rem;
+        margin-top: 0.75rem;
+        width: 100%;
+    }
+
+    .notification-actions button {
+        width: 100%;
+        text-align: center;
+    }
+
+    .toggle-read {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .notifications-container {
+        padding: 0.5rem;
+    }
+
+    .notification-title {
+        font-size: 0.9rem;
+    }
+
+    .notification-message {
+        font-size: 0.85rem;
+    }
+
+    .notification-time {
+        font-size: 0.75rem;
+    }
+
+    .notification-actions button {
+        font-size: 0.85rem;
+        padding: 5px 10px;
+    }
+
+    .toggle-read {
+        font-size: 0.9rem;
+        padding: 6px 12px;
     }
 }

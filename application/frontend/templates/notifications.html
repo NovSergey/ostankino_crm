@@ -7,43 +7,13 @@
 {% endblock %}
 
 {% block content %}
-<h1 class="title">Уведомления</h1>
+<div class="notifications-header">
+    <h1 class="title">Уведомления</h1>
+    <button id="filter-btn" class="toggle-read">Показать прочитанные</button>
+</div>
+
 <div class="notifications-container">
-    <ul class="notification-list">
-        <li class="notification-item unread">
-            <i class="fas fa-exclamation-circle notification-icon"></i>
-            <div class="notification-content">
-                <p class="notification-title">Несанкционированный доступ</p>
-                <p class="notification-message">Сотрудник Иванов А.А. пытался войти на объект "Склад №3" без действующего пропуска.</p>
-                <p class="notification-time">Сегодня, 14:32</p>
-            </div>
-            <div class="notification-actions">
-                <button onclick="markAsRead(this)">Пометить как прочитанное</button>
-            </div>
-        </li>
-        <li class="notification-item">
-            <i class="fas fa-user-plus notification-icon"></i>
-            <div class="notification-content">
-                <p class="notification-title">Новый сотрудник</p>
-                <p class="notification-message">Добавлен новый сотрудник: Петров В.В.</p>
-                <p class="notification-time">Вчера, 09:15</p>
-            </div>
-            <div class="notification-actions">
-                <button onclick="markAsRead(this)">Пометить как прочитанное</button>
-            </div>
-        </li>
-        <li class="notification-item unread">
-            <i class="fas fa-shield-alt notification-icon"></i>
-            <div class="notification-content">
-                <p class="notification-title">Нарушение санитарного разрыва</p>
-                <p class="notification-message">Сотрудник Сидоров Н.Н. не выдержал санитарный разрыв перед посещением объекта "Завод №1".</p>
-                <p class="notification-time">Сегодня, 08:47</p>
-            </div>
-            <div class="notification-actions">
-                <button onclick="markAsRead(this)">Пометить как прочитанное</button>
-            </div>
-        </li>
-    </ul>
+    <ul class="notification-list" id="notification-container"></ul>
 </div>
 {% endblock %}
 

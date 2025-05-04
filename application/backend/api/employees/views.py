@@ -1,12 +1,13 @@
 import uuid
 from urllib.parse import unquote
 
-from fastapi import APIRouter, status, Depends, Query, HTTPException
+from fastapi import APIRouter, status, Depends, Query, HTTPException, BackgroundTasks
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from application.backend.core import db_helper
 from application.backend.api.general_schemas.employee import EmployeeScanResult
 from application.backend.api.users.dependencies import check_current_user
+from application.backend.utils.notification_utils import create_notification
 
 from . import crud
 from .dependencies import employee_by_id, employee_search
@@ -27,9 +28,17 @@ async def get_employees(
 @router.post("/", response_model=Employee, status_code=status.HTTP_201_CREATED)
 async def create_employee(
         employee_in: EmployeeCreate,
+        background_tasks: BackgroundTasks,
         session: AsyncSession = Depends(db_helper.session_dependency),
 ):
-    return await crud.create_employee(session=session, employee=employee_in)
+    employee_new =  await crud.create_employee(session=session, employee=employee_in)
+    background_tasks.add_task(
+        create_notification,
+        session=session,
+        title="Новый сотрудник",
+        message=f"Добавлен сотрудник: {employee_new.full_name} | {employee_new.phone}"
+    )
+    return employee_new
 
 
 @router.get("/scan_info/", response_model=EmployeeScanResult)
@@ -99,7 +108,15 @@ async def update_employee(
 
 @router.delete("/{employee_id}/", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_employee(
+        background_tasks: BackgroundTasks,
         employee: Employee = Depends(employee_by_id),
         session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> None:
-    await crud.delete_employee(session=session, employee=employee)
+    employee_deleted = await crud.delete_employee(session=session, employee=employee)
+    background_tasks.add_task(
+        create_notification,
+        session=session,
+        title="Удалён сотрудник",
+        message=f"Удалён сотрудник: {employee.full_name} | {employee.phone}"
+    )
+    return employee_deleted
