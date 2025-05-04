@@ -8,6 +8,7 @@ from .users.views import router as users_router
 from .sanitary_breaks.views import router as sanitary_breaks_router
 from .sanitary_changes.views import router as sanitary_changes_router
 
+
 router = APIRouter()
 router.include_router(router=users_router, prefix="/users")
 router.include_router(router=employees_router, prefix="/employees")

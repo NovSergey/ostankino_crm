@@ -1,13 +1,16 @@
+import uuid
 from urllib.parse import unquote
 
-from fastapi import APIRouter, status, Depends, Query
+from fastapi import APIRouter, status, Depends, Query, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from application.backend.core import db_helper
+from application.backend.api.general_schemas.employee import EmployeeScanResult
+from application.backend.api.users.dependencies import check_current_user
+
 from . import crud
 from .dependencies import employee_by_id, employee_search
 from .schemas import Employee, EmployeeCreate, EmployeeUpdate
-from application.backend.api.users.dependencies import check_current_user
 
 router = APIRouter(tags=["Employees"], dependencies=[Depends(check_current_user())])
 
@@ -29,9 +32,22 @@ async def create_employee(
     return await crud.create_employee(session=session, employee=employee_in)
 
 
-@router.get("/{employee_id}/", response_model=Employee)
-async def get_employee(employee: Employee = Depends(employee_by_id)):
-    return employee
+@router.get("/scan_info/", response_model=EmployeeScanResult)
+async def get_employee_scan_info(
+        employee_id: uuid.UUID,
+        scanned_by_user_id: uuid.UUID,
+        session: AsyncSession = Depends(db_helper.session_dependency),
+):
+    employee = await crud.get_employee(session, employee_id)
+    scanned_user = await crud.get_employee(session, scanned_by_user_id)
+
+    if employee is None or scanned_user is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Product {employee_id} not found!",
+        )
+
+    return await crud.get_scan_employee_info(session, employee, scanned_user)
 
 
 @router.get("/search", response_model=list[Employee])
@@ -55,6 +71,19 @@ async def search_employees(
     )
 
 
+@router.post("/restore/{employee_id}/")
+async def restore_employee(
+        employee: Employee = Depends(employee_by_id),
+        session: AsyncSession = Depends(db_helper.session_dependency),
+) -> None:
+    await crud.restore_employee(session=session, employee=employee)
+
+
+@router.get("/{employee_id}/", response_model=Employee)
+async def get_employee(employee: Employee = Depends(employee_by_id)):
+    return employee
+
+
 @router.put("/{employee_id}/", response_model=Employee)
 async def update_employee(
         employee_update: EmployeeUpdate,
@@ -74,11 +103,3 @@ async def delete_employee(
         session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> None:
     await crud.delete_employee(session=session, employee=employee)
-
-
-@router.post("/restore/{employee_id}/")
-async def restore_employee(
-        employee: Employee = Depends(employee_by_id),
-        session: AsyncSession = Depends(db_helper.session_dependency),
-) -> None:
-    await crud.restore_employee(session=session, employee=employee)

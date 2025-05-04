@@ -2,6 +2,7 @@ import uuid
 
 from pydantic import BaseModel, ConfigDict
 
+from application.backend.api.general_schemas.base import CustomBaseModel
 from application.backend.api.groups.schemas import Group
 from application.backend.api.objects.schemas import Object
 from application.backend.core.models import RoleEnum
@@ -27,7 +28,7 @@ class EmployeeUpdate(EmployeeCreate):
 class EmployeeFullBase(EmployeeBase):
     id: uuid.UUID
 
-class Employee(BaseModel):
+class Employee(CustomBaseModel):
     id: uuid.UUID
     full_name: str
     phone: str

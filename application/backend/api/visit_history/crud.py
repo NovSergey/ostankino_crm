@@ -29,7 +29,7 @@ async def get_visit_history(session: AsyncSession, offset: int = 0, count: int =
     return list(result.scalars().all())
 
 
-async def create_visit_history(session: AsyncSession, entry: VisitHistoryCreate) -> VisitHistory:
+async def create_visit_history_in(session: AsyncSession, entry: VisitHistoryCreate) -> VisitHistory:
     entry_created = VisitHistory(**entry.model_dump())
     scanned_user = await session.get(Employee, entry_created.scanned_by_user_id)
     if not scanned_user:
@@ -55,6 +55,48 @@ async def create_visit_history(session: AsyncSession, entry: VisitHistoryCreate)
         .where(VisitHistory.id == entry_created.id)
     )
     return result.scalar_one()
+
+
+async def create_visit_history_out(session: AsyncSession, entry: VisitHistoryCreate) -> VisitHistory:
+    scanned_user = await session.get(Employee, entry.scanned_by_user_id)
+    if not scanned_user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Employee {entry.scanned_by_user_id} not found!",
+        )
+    result = await session.execute(
+        select(VisitHistory)
+        .options(
+            selectinload(VisitHistory.employee),
+            selectinload(VisitHistory.object),
+            selectinload(VisitHistory.scanned_by_user),
+            selectinload(VisitHistory.employee).selectinload(Employee.object),
+            selectinload(VisitHistory.employee).selectinload(Employee.group),
+            selectinload(VisitHistory.scanned_by_user).selectinload(Employee.object),
+            selectinload(VisitHistory.scanned_by_user).selectinload(Employee.group),
+        )
+        .where(
+            VisitHistory.employee_id == entry.employee_id,
+            VisitHistory.scanned_by_user_id == entry.scanned_by_user_id,
+        )
+        .order_by(desc(VisitHistory.entry_time))
+        .limit(1)
+    )
+    visit_his = result.scalar_one_or_none()
+    if not visit_his:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Not found visit history",
+        )
+    if visit_his.exit_time:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Not found visit history",
+        )
+    visit_his.exit_time = datetime.now()
+    await session.commit()
+    return visit_his
+
 
 async def get_active_users(session: AsyncSession, object_id: int) -> list[VisitHistory]:
     two_days_ago = datetime.utcnow() - timedelta(days=2)

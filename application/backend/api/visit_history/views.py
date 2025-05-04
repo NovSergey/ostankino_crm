@@ -1,4 +1,5 @@
 from datetime import datetime
+from enum import Enum
 from urllib.parse import unquote
 
 from fastapi import APIRouter, Depends, status, Query, HTTPException
@@ -13,6 +14,10 @@ from application.backend.api.objects.crud import get_object
 
 router = APIRouter(tags=["Visit History"])
 
+class VisitActionEnum(str, Enum):
+    IN = 'in'
+    OUT = 'out'
+
 
 @router.get("/", response_model=list[VisitHistory], dependencies=[Depends(check_current_user())])
 async def get_visit_history(
@@ -26,9 +31,14 @@ async def get_visit_history(
 @router.post("/", response_model=VisitHistory, status_code=status.HTTP_201_CREATED)
 async def create_visit_history(
         entry: VisitHistoryCreate,
+        action: VisitActionEnum,
         session: AsyncSession = Depends(db_helper.session_dependency),
 ):
-    return await crud.create_visit_history(session=session, entry=entry)
+    if action == "in":
+        return await crud.create_visit_history_in(session=session, entry=entry)
+    else:
+        return await crud.create_visit_history_out(session=session, entry=entry)
+
 
 @router.get("/search", response_model=list[VisitHistory])
 async def search_history(

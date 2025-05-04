@@ -21,3 +21,4 @@ from .visit_history import VisitHistory, VisitStatusEnum
 from .users import User
 from .sanitary_breaks import SanitaryBreak, SanitaryTypeEnum
 from .sanitary_changes import SanitaryChange
+
