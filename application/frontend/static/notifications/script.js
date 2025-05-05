@@ -14,6 +14,8 @@ document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
 document.addEventListener("DOMContentLoaded", () => {
     const dataBody = document.getElementById("notification-container");
     const toggleBtn = document.getElementById("filter-btn");
+    const readAllBtn = document.getElementById("mark-all-read-btn");
+    
 
     let offset = 0;
     const limit = 20;
@@ -26,9 +28,9 @@ document.addEventListener("DOMContentLoaded", () => {
         loading = true;
 
         try {
-            const response = await fetch(`/api/notifications?active=${readFilter}&offset=${offset}&count=${limit}`);
+            const response = await fetch(`/api/notifications/?active=${readFilter}&offset=${offset}&count=${limit}`);
             if (response.status === 403) {
-                window.location.href = '/login';
+                window.location.href = '/login/';
                 return;
             }
 
@@ -60,7 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
             content.classList.add("notification-content");
             content.innerHTML = `
                 <p class="notification-title">${entry.title}</p>
-                <p class="notification-message">${entry.message}</p>
+                <p class="notification-message">${entry.message.replace(/\n/g, "<br>")}</p>
                 <p class="notification-time">${entry.time}</p>
             `;
 
@@ -81,14 +83,24 @@ document.addEventListener("DOMContentLoaded", () => {
             li.appendChild(actions);
             dataBody.appendChild(li);
         });
+        if(readFilter){
+            readAllBtn.classList.add("hidden-button");
+            toggleBtn.classList.add("toggle-read-all");
+            toggleBtn.parentElement.classList.add("toggle-read-all");
+        }
+        else if(dataBody.innerHTML != ""){
+            readAllBtn.classList.remove("hidden-button");
+            toggleBtn.classList.remove("toggle-read-all");
+            toggleBtn.parentElement.classList.remove("toggle-read-all");
+        }
     }
 
     async function markAsRead(button, id) {
         try {
-            const response = await fetch(`/api/notifications/read/${id}`, { method: 'POST' });
+            const response = await fetch(`/api/notifications/read/${id}/`, { method: 'POST' });
             if (!response.ok) {
                 if (response.status === 403) {
-                    window.location.href = '/login';
+                    window.location.href = '/login/';
                 } else {
                     alert("Не удалось пометить прочитанным");
                     return;
@@ -104,6 +116,24 @@ document.addEventListener("DOMContentLoaded", () => {
         button.remove();
     }
 
+    async function readAll() {
+        try {
+            const response = await fetch(`/api/notifications/read_all/`, { method: 'POST' });
+            if (!response.ok) {
+                if (response.status === 403) {
+                    window.location.href = '/login/';
+                } else {
+                    alert("Не удалось пометить прочитанным");
+                    return;
+                }
+            }
+        } catch (error) {
+            console.error("Ошибка загрузки данных:", error);
+            alert("Не удалось пометить прочитанным");
+            return;
+        }
+    }
+
     window.addEventListener("scroll", () => {
         if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100) {
             getData();
@@ -117,6 +147,11 @@ document.addEventListener("DOMContentLoaded", () => {
         dataBody.innerHTML = "";
         toggleBtn.textContent = readFilter ? "Показать непрочитанные" : "Показать прочитанные";
         getData();
+    });
+
+    readAllBtn.addEventListener("click", async () => {
+        await readAll();
+        window.location.reload();
     });
 
     getData();

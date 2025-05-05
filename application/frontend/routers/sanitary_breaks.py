@@ -8,14 +8,14 @@ router = APIRouter(dependencies=[Depends(jwt_required_redirect())])
 templates = Jinja2Templates(directory=settings.templates_folder)
 
 
-@router.get("/main")
+@router.get("/main/")
 async def get_sanitary_page(request: Request):
     return templates.TemplateResponse("sanitary_breaks.html", {"request": request, "type": "main", 'name': "основные"})
 
-@router.get("/tractor")
+@router.get("/tractor/")
 async def get_sanitary_page(request: Request):
     return templates.TemplateResponse("sanitary_breaks.html", {"request": request, "type": "tractor", 'name': "трактористов"})
 
-@router.get("/car")
+@router.get("/car/")
 async def get_sanitary_page(request: Request):
     return templates.TemplateResponse("sanitary_breaks.html", {"request": request, "type": "car", 'name': "водителей"})

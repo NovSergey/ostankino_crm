@@ -1,5 +1,4 @@
-from fastapi import HTTPException, status
-from sqlalchemy import select, exists, desc
+from sqlalchemy import select, desc
 from sqlalchemy.engine import Result
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload

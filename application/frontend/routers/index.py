@@ -10,9 +10,9 @@ templates = Jinja2Templates(directory=settings.templates_folder)
 
 @router.get("/", dependencies=[Depends(jwt_required_redirect())])
 async def index(request: Request):
-    return templates.TemplateResponse(name="index.html", request=request)
+    return templates.TemplateResponse(name="base.html", request=request)
 
 
-@router.get("/login")
+@router.get("/login/")
 async def login(request: Request):
     return templates.TemplateResponse(name="login.html", request=request)

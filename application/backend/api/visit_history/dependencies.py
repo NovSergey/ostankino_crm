@@ -1,10 +1,10 @@
+import uuid
 from datetime import datetime, time
 
-from sqlalchemy import select, desc
+from sqlalchemy import select, desc, Result
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from application.backend.core import db_helper
 from application.backend.core.models import VisitHistory, Employee
 
 
@@ -43,3 +43,19 @@ async def visit_history_search(
     stmt = stmt.offset(offset).limit(count).order_by(desc(VisitHistory.entry_time))
     result = await session.execute(stmt)
     return list(result.scalars().all())
+
+
+async def get_last_visit_by_id(employee_id: uuid.UUID, session: AsyncSession) -> VisitHistory | None :
+    stmt = (
+        select(VisitHistory)
+        .options(
+            selectinload(VisitHistory.object),
+            selectinload(VisitHistory.scanned_by_user),
+            selectinload(VisitHistory.scanned_by_user).selectinload(Employee.object),
+            selectinload(VisitHistory.scanned_by_user).selectinload(Employee.group),
+        ).where(VisitHistory.employee_id == employee_id)
+        .order_by(desc(VisitHistory.entry_time))
+        .limit(1)
+    )
+    result: Result = await session.execute(stmt)
+    return result.scalar_one_or_none()

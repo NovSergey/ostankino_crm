@@ -10,7 +10,7 @@ from application.backend.api.users.dependencies import check_current_user
 from application.backend.utils.notification_utils import create_notification
 
 from . import crud
-from .dependencies import employee_by_id, employee_search
+from .dependencies import employee_by_id, employee_search, get_scan_employee_info
 from .schemas import Employee, EmployeeCreate, EmployeeUpdate
 
 router = APIRouter(tags=["Employees"], dependencies=[Depends(check_current_user())])
@@ -56,10 +56,10 @@ async def get_employee_scan_info(
             detail=f"Product {employee_id} not found!",
         )
 
-    return await crud.get_scan_employee_info(session, employee, scanned_user)
+    return await get_scan_employee_info(session, employee, scanned_user)
 
 
-@router.get("/search", response_model=list[Employee])
+@router.get("/search/", response_model=list[Employee])
 async def search_employees(
         full_name: str = Query(""),
         phone: str = Query(""),

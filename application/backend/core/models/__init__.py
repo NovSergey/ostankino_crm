@@ -15,12 +15,13 @@ __all__ = (
 )
 
 from .base import Base
-from .employees import Employee, RoleEnum
+from .employees import Employee
 from .groups import Group
-from .objects import Object, ObjectStatusEnum
-from .visit_history import VisitHistory, VisitStatusEnum
+from .objects import Object
+from .visit_history import VisitHistory
 from .users import User
-from .sanitary_breaks import SanitaryBreak, SanitaryTypeEnum
+from .sanitary_breaks import SanitaryBreak
 from .sanitary_changes import SanitaryChange
 from .notifications import Notification
+from .enums import *
 

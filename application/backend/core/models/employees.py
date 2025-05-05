@@ -1,6 +1,5 @@
 from typing import TYPE_CHECKING
 
-import enum
 import uuid
 
 from sqlalchemy import String, ForeignKey
@@ -8,15 +7,12 @@ from sqlalchemy.dialects.postgresql import ENUM as PgEnum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import Base
+from .enums import RoleEnum, SanitaryTypeEnum
 
 if TYPE_CHECKING:
     from .groups import Group
     from .objects import Object
 
-class RoleEnum(enum.Enum):
-    admin = "admin"
-    employee = "employee"
-    security = "security"
 
 class Employee(Base):
     __tablename__ = "employees"
@@ -30,5 +26,8 @@ class Employee(Base):
 
     group_id: Mapped[int] = mapped_column(ForeignKey("groups.id"), nullable=True)
     group: Mapped["Group"] = relationship()
+
+    sanitary_table: Mapped[SanitaryTypeEnum] = mapped_column(PgEnum(SanitaryTypeEnum, name="sanitary_type_enum"),
+                                                            nullable=False, server_default="main")
 
     is_deleted: Mapped[bool] = mapped_column(nullable=False, default=False)

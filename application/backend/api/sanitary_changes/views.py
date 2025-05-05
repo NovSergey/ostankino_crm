@@ -14,7 +14,7 @@ router = APIRouter(tags=["Sanitary Changes"])
 
 
 
-@router.get("/{sanitary_type}", response_model=list[SanitaryChangeBase], dependencies=[Depends(check_current_user())])
+@router.get("/{sanitary_type}/", response_model=list[SanitaryChangeBase], dependencies=[Depends(check_current_user())])
 async def get_sanitary_breaks(
         sanitary_type: SanitaryTypeEnum,
         offset: int = Query(0, ge=0),
@@ -23,7 +23,7 @@ async def get_sanitary_breaks(
 ):    return await crud.get_sanitary_changes(session=session, sanitary_type=sanitary_type, offset=offset, count=count)
 
 
-@router.get("/search/{sanitary_type}", response_model=list[SanitaryChangeBase])
+@router.get("/search/{sanitary_type}/", response_model=list[SanitaryChangeBase])
 async def search_changes(
         sanitary_type: SanitaryTypeEnum,
         object_from_id: int = Query(None),

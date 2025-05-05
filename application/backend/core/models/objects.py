@@ -1,14 +1,10 @@
-import enum
-
 from sqlalchemy import String
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.dialects.postgresql import ENUM as PgEnum
 
 from .base import Base
+from .enums import ObjectStatusEnum
 
-class ObjectStatusEnum(enum.Enum):
-    open = "Открыт"
-    close = "Закрыт"
 
 class Object(Base):
     __tablename__ = 'objects'

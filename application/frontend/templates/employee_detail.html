@@ -44,6 +44,14 @@
                 {% endfor %}
             </select>
         </div>
+        <div class="form-group">
+            <label for="sanitary-table">Таблица разрывов:</label>
+            <select class="custom-select" id="sanitary-table" name="sanitary_table" disabled>
+                {% for sanitary_table in sanitary_tables %}
+                    <option value="{{ sanitary_table.value }}">{{ sanitary_table.label }}</option>
+                {% endfor %}
+            </select>
+        </div>
         <div class="form-actions">
             <button type="button" class="btn primary" id="edit-btn"><i class="fas fa-pen"></i> Редактировать</button>
             <button type="submit" class="btn success hidden" id="save-btn"><i class="fas fa-save"></i> Сохранить</button>

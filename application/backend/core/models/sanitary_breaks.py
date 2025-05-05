@@ -1,4 +1,3 @@
-import enum
 from typing import TYPE_CHECKING
 
 from sqlalchemy import ForeignKey
@@ -6,14 +5,10 @@ from sqlalchemy.dialects.postgresql import ENUM as PgEnum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import Base
+from .enums import SanitaryTypeEnum
 
 if TYPE_CHECKING:
     from .objects import Object
-
-class SanitaryTypeEnum(enum.Enum):
-    main = "main"
-    car = "car"
-    tractor = "tractor"
 
 class SanitaryBreak(Base):
     __tablename__ = 'sanitary_breaks'

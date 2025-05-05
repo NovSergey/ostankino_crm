@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
             const response = await fetch("/api/objects/");
             if (response.status === 403){
-                window.location.href = '/login';
+                window.location.href = '/login/';
             }
             const data = await response.json();
             renderObjects(data);

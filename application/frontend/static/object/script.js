@@ -9,12 +9,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async function getData() {
         try {
-            const response = await fetch(`/api/visit_history/active_users/${CURRENT_OBJECT}`);
+            const response = await fetch(`/api/visit_history/active_users/${CURRENT_OBJECT}/`);
             if (response.status === 403){
                 window.location.href = '/';
             }
             else if (response.status === 401){
-                window.location.href = '/login'
+                window.location.href = '/login/'
             }
             const data = await response.json();
             renderPage(data);

@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
             const response = await fetch("/api/objects/");
             if (response.status === 401) {
-                window.location.href = '/login';
+                window.location.href = '/login/';
             }
             return await response.json();
         } catch (error) {
@@ -18,9 +18,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async function getBreaks() {
         try {
-            const response = await fetch(`/api/sanitary_breaks/${TYPE_BREAK}`);
+            const response = await fetch(`/api/sanitary_breaks/${TYPE_BREAK}/`);
             if (response.status === 401) {
-                window.location.href = '/login';
+                window.location.href = '/login/';
             }
             return await response.json();
         } catch (error) {
@@ -139,7 +139,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (updatedData.length > 0) {
             try {
-                const response = await fetch(`/api/sanitary_breaks/${TYPE_BREAK}`, {
+                const response = await fetch(`/api/sanitary_breaks/${TYPE_BREAK}/`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(updatedData)
@@ -147,7 +147,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (!response.ok) {
                     if (response.status === 401) {
-                        window.location.href = '/login';
+                        window.location.href = '/login/';
                     }
                     throw new Error('Ошибка при сохранении данных');
                 }

@@ -28,7 +28,7 @@ form.addEventListener('submit', async (e) => {
                 window.location.href = '/';
             }
             else if (response.status === 401){
-                window.location.href = '/login'
+                window.location.href = '/login/'
             }
             alert('Не удалось добавить');
         }

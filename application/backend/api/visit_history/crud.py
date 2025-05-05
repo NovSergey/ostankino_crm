@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from fastapi import HTTPException, status
-from sqlalchemy import select, desc
+from sqlalchemy import select, desc, func
 from sqlalchemy.engine import Result
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
@@ -41,6 +41,7 @@ async def create_visit_history_in(session: AsyncSession, entry: VisitHistoryCrea
     entry_created.object_id = scanned_user.object_id
     session.add(entry_created)
     await session.commit()
+
     result = await session.execute(
         select(VisitHistory)
         .options(
@@ -99,21 +100,35 @@ async def create_visit_history_out(session: AsyncSession, entry: VisitHistoryCre
 
 
 async def get_active_users(session: AsyncSession, object_id: int) -> list[VisitHistory]:
-    two_days_ago = datetime.utcnow() - timedelta(days=2)
-    stmt = (
-        select(VisitHistory)
-        .options(
-            selectinload(VisitHistory.employee),
-            selectinload(VisitHistory.scanned_by_user),
-            selectinload(VisitHistory.employee).selectinload(Employee.object),
-            selectinload(VisitHistory.employee).selectinload(Employee.group),
-            selectinload(VisitHistory.scanned_by_user).selectinload(Employee.object),
-            selectinload(VisitHistory.scanned_by_user).selectinload(Employee.group),
+    two_days_ago = datetime.utcnow() - timedelta(days=1)
+    subquery = (
+        select(
+            func.max(VisitHistory.entry_time).label("latest_entry"),
+            VisitHistory.employee_id
         )
-        .filter(
-        VisitHistory.object_id == object_id,
+        .where(
+            VisitHistory.object_id == object_id,
             VisitHistory.exit_time == None,
             VisitHistory.entry_time >= two_days_ago
+        )
+        .group_by(VisitHistory.employee_id)
+        .subquery()
+    )
+
+    stmt = (
+        select(VisitHistory)
+        .join(
+            subquery,
+            (VisitHistory.employee_id == subquery.c.employee_id) &
+            (VisitHistory.entry_time == subquery.c.latest_entry)
+        )
+        .options(
+            selectinload(VisitHistory.employee),
+            selectinload(VisitHistory.employee).selectinload(Employee.object),
+            selectinload(VisitHistory.employee).selectinload(Employee.group),
+            selectinload(VisitHistory.scanned_by_user),
+            selectinload(VisitHistory.scanned_by_user).selectinload(Employee.object),
+            selectinload(VisitHistory.scanned_by_user).selectinload(Employee.group),
         )
     )
     result = await session.execute(stmt)

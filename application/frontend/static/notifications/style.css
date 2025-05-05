@@ -88,23 +88,48 @@
 
 .toggle-read {
     padding: 8px 16px;
-    background-color: #e0e0e0;
-    border: none;
+    background-color: #f0f4ff;
+    border: 1px solid #b3c7ff;
     border-radius: 6px;
     cursor: pointer;
     font-size: 1rem;
-    transition: background-color 0.3s;
+    color: #2b5dcc;
+    transition: background-color 0.3s, border-color 0.3s, color 0.3s;
 }
 
 .toggle-read:hover {
-    background-color: #d0d0d0;
+    background-color: #dbe7ff;
+    border-color: #99b2ff;
+    color: #2049a0;
 }
+
 
 .no-notifications {
     text-align: center;
     color: #999;
     font-size: 1.1rem;
     padding: 2rem;
+}
+
+.notification-buttons {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.mark-all-read {
+    padding: 8px 16px;
+    background-color: #2ecc71;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    color: #fff;
+    transition: background-color 0.3s;
+}
+
+.mark-all-read:hover {
+    background-color: #27ae60;
 }
 
 /* Responsive Design */
@@ -136,7 +161,7 @@
         text-align: center;
     }
 
-    .toggle-read {
+    .toggle-read-all {
         width: 100%;
         text-align: center;
     }
@@ -168,4 +193,8 @@
         font-size: 0.9rem;
         padding: 6px 12px;
     }
+}
+
+.hidden-button {
+    display: none !important;
 }

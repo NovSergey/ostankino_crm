@@ -55,12 +55,12 @@ const tabs = {
 
         async getData(){
             try {
-                const response = await fetch(`/api/sanitary_changes/${this.activeSubtab}?offset=${this.offset}&count=${this.limit}`);
+                const response = await fetch(`/api/sanitary_changes/${this.activeSubtab}/?offset=${this.offset}&count=${this.limit}`);
                 if (response.status === 403){
                     window.location.href = '/';
                 }
                 else if (response.status === 401){
-                    window.location.href = '/login'
+                    window.location.href = '/login/'
                 }
                 const newData = await response.json();
                 return newData
@@ -80,14 +80,14 @@ const tabs = {
                     ...(end_time && { end_time }),
                   };
                 const queryString = new URLSearchParams(params).toString();
-                const response = await fetch(`/api/sanitary_changes/search/${this.activeSubtab}?${queryString}`);
+                const response = await fetch(`/api/sanitary_changes/search/${this.activeSubtab}/?${queryString}`);
                 if (!response.ok){
                     console.error(await response.text());
                     if (response.status === 403){
                         window.location.href = '/';
                     }
                     else if (response.status === 401){
-                        window.location.href = '/login'
+                        window.location.href = '/login/'
                     }
                 }
                 const newData = await response.json();
@@ -194,7 +194,7 @@ const tabs = {
             try {
                 const response = await fetch("/api/objects/");
                 if (response.status === 401){
-                    window.location.href = '/login'
+                    window.location.href = '/login/'
                 }
                 const objects = await response.json();
                 objects.forEach(object => {
@@ -241,10 +241,10 @@ const tabs = {
             }
 
             try {
-                const response = await fetch(`/api/users?offset=${this.offset}&count=${this.limit}`);
+                const response = await fetch(`/api/users/?offset=${this.offset}&count=${this.limit}`);
                 if (!response.ok) {
                     if (response.status === 401) {
-                        window.location.href = '/login';
+                        window.location.href = '/login/';
                     } else if (response.status === 403) {
                         window.location.href = '/';
                     }
@@ -300,7 +300,7 @@ const tabs = {
         init() {
             this.setupForm();
             this.addPhoneMask = document.getElementById('addPhone');
-            if(this.addPhoneMask){
+            if (this.addPhoneMask) {
                 this.addPhoneMask = IMask(this.addPhoneMask, {
                     mask: '+{7} (000) 000-00-00'
                 });
@@ -308,22 +308,30 @@ const tabs = {
         },
         setupForm() {
             const form = document.getElementById('addUserForm');
+            const submitButton = form.querySelector('button[type="submit"]'); // Находим кнопку отправки
             if (form) {
                 form.addEventListener('submit', async e => {
                     e.preventDefault();
+    
+                    // Если запрос уже в процессе, не отправляем новый
+                    if (submitButton.disabled) return;
+                    
+                    submitButton.disabled = true; // Блокируем кнопку
+    
                     const userData = {
                         username: document.getElementById('addUsername').value,
                         full_name: document.getElementById('addFullName').value,
                         phone: this.addPhoneMask.unmaskedValue,
                         password: document.getElementById('addGeneratedPassword').value
                     };
+    
                     try {
-                        const res = await fetch('/api/users/register', {
+                        const res = await fetch('/api/users/register/', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify(userData)
                         });
-                        if (!res.ok){
+                        if (!res.ok) {
                             alert('Ошибка: ' + await res.text());
                             return;
                         }
@@ -331,11 +339,13 @@ const tabs = {
                         form.reset();
                     } catch (err) {
                         alert('Ошибка: ' + err.message);
+                    } finally {
+                        submitButton.disabled = false; // Включаем кнопку обратно
                     }
                 });
             }
         }
-    },
+    },    
     account: {
         init() {
             this.setupForm();
@@ -382,7 +392,7 @@ const tabs = {
                     full_name: document.getElementById('accountFullName').value,
                     phone: this.accountPhoneMask.unmaskedValue
                 };
-                const response = await fetch(`/api/users/${userData.username}`, {
+                const response = await fetch(`/api/users/${userData.username}/`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(userData)
@@ -401,56 +411,66 @@ const tabs = {
             const changePasswordBtn = document.getElementById('changePasswordBtn');
             const closeModal = document.getElementById('closeModal');
             const passwordForm = document.getElementById('passwordForm');
-
+            
             passwordModal.style.display = 'none';
-
+        
             changePasswordBtn.addEventListener('click', () => {
                 passwordModal.style.display = 'flex';
             });
-
+        
             closeModal.addEventListener('click', () => {
                 passwordModal.style.display = 'none';
             });
-
-            passwordForm.addEventListener('submit', async e => {
+        
+            passwordForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
+        
+                // Блокировка кнопки на время запроса
+                const submitButton = passwordForm.querySelector('button[type="submit"]');
+                submitButton.disabled = true; // Отключаем кнопку
+        
                 const username = document.getElementById('accountUsername').value;
                 const password = document.getElementById('currentPassword').value;
                 const new_password = document.getElementById('newPassword').value;
                 const confirm_password = document.getElementById('confirmPassword').value;
-
+        
                 if (new_password !== confirm_password) {
                     alert('Пароли различаются');
+                    submitButton.disabled = false; // Включаем кнопку обратно
                     return;
                 }
-
+        
                 try {
-                    const response = await fetch('/api/users/change_password', {
+                    const response = await fetch('/api/users/change_password/', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ username, password, new_password })
                     });
+        
                     if (response.ok) {
-                        alert('Успешно');
+                        alert('Пароль успешно изменен');
                         passwordModal.style.display = 'none';
                     } else {
                         alert('Ошибка смены пароля. Проверьте пароль.');
                     }
                 } catch (error) {
                     alert('Произошла ошибка при смене пароля.');
+                } finally {
+                    submitButton.disabled = false; // Включаем кнопку обратно
                 }
+        
                 passwordForm.reset();
             });
-        }
+        }        
     }
 };
 
 async function getSanitaryBreaks(break_type, offset, count) {
     try {
-        const response = await fetch(`/api/sanitary_changes/${break_type}?offset=${offset}&count=${count}`);
+        const response = await fetch(`/api/sanitary_changes/${break_type}/?offset=${offset}&count=${count}`);
         if (!response.ok) {
             if (response.status === 401) {
-                window.location.href = '/login';
+                window.location.href = '/login/';
             }
             throw new Error('Ошибка загрузки данных');
         }

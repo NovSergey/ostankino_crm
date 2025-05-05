@@ -13,7 +13,9 @@ export function openModalEmployee(entry, object_name=null) {
     document.getElementById("modalPhoneEmployee").textContent = entry.employee.phone;
     document.getElementById("modalObjectEmployee").textContent = entry.employee.object ? entry.employee.object.name : "Не установлено";
     document.getElementById("modalGroupEmployee").textContent = entry.employee.group ? entry.employee.group.title : "Не установлено";
+    document.getElementById("modalSanitaryTableEmployee").textContent = entry.employee.sanitary_table ? entry.employee.sanitary_table.label : "Не установлено";
 
+    
     document.getElementById("modalIdScanerEmployee").textContent = entry.scanned_by_user.id;
     document.getElementById("modalIdScanerEmployee").setAttribute("href", "/employees/"+entry.scanned_by_user.id)
     document.getElementById("modalNameScanerEmployee").textContent = entry.scanned_by_user.full_name;

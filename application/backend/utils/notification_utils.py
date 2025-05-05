@@ -20,7 +20,10 @@ async def check_unfinished_visits_and_notify():
                 selectinload(VisitHistory.object),
                 selectinload(VisitHistory.scanned_by_user),
             )
-            .where(VisitHistory.exit_time.is_(None))
+            .where(
+                VisitHistory.exit_time.is_(None),
+                VisitHistory.was_reported_missing_exit == False
+            )
         )
         unfinished_visits: list[VisitHistory] = list(result.scalars().all())
         for unfinished_visit in unfinished_visits:
@@ -29,4 +32,6 @@ async def check_unfinished_visits_and_notify():
                 message=f"Работник {unfinished_visit.employee.full_name} | {unfinished_visit.employee.phone} не вышел с объекта {unfinished_visit.object.name}",
                 session=session
             )
+            unfinished_visit.was_reported_missing_exit = True
+            await session.commit()
 

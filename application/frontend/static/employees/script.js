@@ -19,12 +19,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async function getData() {
         try {
-            const response = await fetch(`/api/employees?offset=${offset}&count=${limit}`);
+            const response = await fetch(`/api/employees/?offset=${offset}&count=${limit}`);
             if (response.status === 403){
                 window.location.href = '/';
             }
             else if (response.status === 401){
-                window.location.href = '/login'
+                window.location.href = '/login/'
             }
             const data = await response.json();
             renderTable(data);
@@ -47,14 +47,14 @@ document.addEventListener("DOMContentLoaded", () => {
               };
               
             const queryString = new URLSearchParams(params).toString();
-            const response = await fetch(`/api/employees/search?${queryString}`);
+            const response = await fetch(`/api/employees/search/?${queryString}`);
             if (!response.ok){
                 console.error(await response.text());
                 if (response.status === 403){
                     window.location.href = '/';
                 }
                 else if (response.status === 401){
-                    window.location.href = '/login'
+                    window.location.href = '/login/'
                 }
             }
             const data = await response.json();
@@ -104,7 +104,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 window.location.href = '/';
             }
             else if (response.status === 401){
-                window.location.href = '/login'
+                window.location.href = '/login/'
             }
             const groups = await response.json();
             groups.forEach(pos => {
@@ -124,7 +124,7 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
             const response = await fetch("/api/objects/");
             if (response.status === 401){
-                window.location.href = '/login'
+                window.location.href = '/login/'
             }
             const objects = await response.json();
             objects.forEach(object => {
@@ -148,6 +148,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <td class="hide-on-small">${entry.phone}</td>
                 <td>${entry.object ? entry.object.name : "Не установлено"}</td>
                 <td>${entry.group ? entry.group.title : "Не установлено"}</td>
+                <td class="hide-on-small">${entry.sanitary_table ? entry.sanitary_table.label : "Не установлено"}</td>
             `;
             row.addEventListener("click", () => openModal(entry));
             tableBody.appendChild(row);
@@ -181,6 +182,7 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("modalPhone").textContent = entry.phone;
         document.getElementById("modalObject").textContent = entry.object ? entry.object.name : "Не установлено";
         document.getElementById("modalGroup").textContent = entry.group ? entry.group.title : "Не установлено";
+        document.getElementById("modalSanitaryTable").textContent = entry.sanitary_table ? entry.sanitary_table.label : "Не установлено";
     }
 
     function closeModal() {

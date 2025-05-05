@@ -12,14 +12,14 @@ router = APIRouter(tags=["Sanitary Breaks"])
 
 
 
-@router.get("/{sanitary_type}", response_model=list[SanitaryBreakBase], dependencies=[Depends(check_current_user())])
+@router.get("/{sanitary_type}/", response_model=list[SanitaryBreakBase], dependencies=[Depends(check_current_user())])
 async def get_sanitary_breaks(
         sanitary_type: SanitaryTypeEnum,
         session: AsyncSession = Depends(db_helper.session_dependency),
 ):
     return await crud.get_sanitary_breaks(session=session, sanitary_type=sanitary_type)
 
-@router.put("/{sanitary_type}")
+@router.put("/{sanitary_type}/")
 async def update_sanitary_breaks(
         sanitary_type: SanitaryTypeEnum,
         sanitary_breaks: list[SanitaryBreakBase],
@@ -33,16 +33,10 @@ async def update_sanitary_breaks(
     for sanitary_break in sanitary_breaks:
         await crud.update_get_sanitary_breaks(session=session, sanitary_break=sanitary_break, sanitary_type=sanitary_type, user_id=user_jwt.id)
 
-    type_to_string = {
-        sanitary_type.main: "основных работников",
-        sanitary_type.car: "водителей",
-        sanitary_type.tractor: "трактористов"
-    }
-
     background_tasks.add_task(
         create_notification,
         session=session,
         title="Изменение санитарных разрывов",
-        message=f"Внесены изменения в таблицу санитарных разрывов для {type_to_string[sanitary_type]}"
+        message=f"Внесены изменения в таблицу санитарных разрывов: {sanitary_type.label}"
     )
     return "ok"

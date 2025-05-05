@@ -1,23 +1,19 @@
 from typing import TYPE_CHECKING
 
-import enum
 from datetime import datetime
 
-from pydantic import field_serializer
 from sqlalchemy import ForeignKey, DateTime
 from sqlalchemy.sql import func
 from sqlalchemy.dialects.postgresql import ENUM as PgEnum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import Base
+from .enums import VisitStatusEnum
 
 if TYPE_CHECKING:
     from .objects import Object
     from .employees import Employee
 
-class VisitStatusEnum(enum.Enum):
-    success = "Успешно"
-    error = "Ошибка"
 
 class VisitHistory(Base):
     __tablename__ = 'visit_history'
@@ -38,3 +34,5 @@ class VisitHistory(Base):
     employee: Mapped["Employee"] = relationship(foreign_keys=[employee_id])
 
     status: Mapped[VisitStatusEnum] = mapped_column(PgEnum(VisitStatusEnum, name="visit_status_enum"), nullable=False)
+
+    was_reported_missing_exit: Mapped[bool] = mapped_column(nullable=False, server_default="false")

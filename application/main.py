@@ -18,8 +18,8 @@ scheduler = AsyncIOScheduler()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    scheduler.add_job(check_unfinished_visits_and_notify, "cron", hour=20, minute=26)  # каждый день в 18:00
-    #scheduler.add_job(check_unfinished_visits_and_notify, "interval", seconds=10)
+    scheduler.add_job(check_unfinished_visits_and_notify, "cron", hour=20, minute=00)  # каждый день в 18:00
+    #scheduler.add_job(check_unfinished_visits_and_notify, "interval", seconds=5)
     scheduler.start()
     yield
 
@@ -34,7 +34,7 @@ app.mount("/static", StaticFiles(directory=settings_frontend.static_folder), nam
 @app.exception_handler(AuthXException)
 async def exception_token_handler(request: Request, exc: AuthXException):
     if "api" not in str(request.url):
-        return RedirectResponse(url="/login")
+        return RedirectResponse(url="/login/")
     return JSONResponse(
         status_code=status.HTTP_401_UNAUTHORIZED,
         content={"detail": "Invalid authentication token"},

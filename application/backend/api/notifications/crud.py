@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-from sqlalchemy import select, desc, Result
+from sqlalchemy import select, desc, Result, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from application.backend.core.models import Notification
@@ -23,4 +23,14 @@ async def read_notification(session: AsyncSession, notification_id: int):
     if not notification:
         raise HTTPException(status_code=404, detail=f"Not found notification {notification_id}")
     notification.is_read = True
+    await session.commit()
+
+
+async def read_all_notification(session: AsyncSession):
+    stmt = (
+        update(Notification)
+        .where(Notification.is_read == False)
+        .values(is_read=True)
+    )
+    await session.execute(stmt)
     await session.commit()

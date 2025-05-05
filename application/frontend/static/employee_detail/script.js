@@ -49,8 +49,9 @@ form.addEventListener('submit', async (e) => {
     });
     selects.forEach(input => data[input.name] = input.value == "" ? null : input.value);
     data['phone'] = phoneMask.unmaskedValue;
+    console.log(data);
     try{
-        const response = await fetch(`/api/employees/${id}`, {
+        const response = await fetch(`/api/employees/${id}/`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
@@ -60,7 +61,7 @@ form.addEventListener('submit', async (e) => {
                 window.location.href = '/';
             }
             else if (response.status === 401){
-                window.location.href = '/login'
+                window.location.href = '/login/'
             }
         }
     } catch(e){
@@ -79,7 +80,7 @@ if(deleteBtn){
     deleteBtn.addEventListener('click', async () => {
         let id = document.getElementById("id").value;
         try{
-            const response = await fetch(`/api/employees/${id}`, {
+            const response = await fetch(`/api/employees/${id}/`, {
                 method: 'DELETE',
             });
             if(!response.ok){
@@ -87,7 +88,7 @@ if(deleteBtn){
                     window.location.href = '/';
                 }
                 else if (response.status === 401){
-                    window.location.href = '/login'
+                    window.location.href = '/login/'
                 }
             }
         } catch(e){
@@ -102,7 +103,7 @@ if(restoreBtn){
     restoreBtn.addEventListener('click', async () => {
         let id = document.getElementById("id").value;
         try{
-            const response = await fetch(`/api/employees/restore/${id}`, {
+            const response = await fetch(`/api/employees/restore/${id}/`, {
                 method: 'POST',
             });
             if(!response.ok){
@@ -110,7 +111,7 @@ if(restoreBtn){
                     window.location.href = '/';
                 }
                 else if (response.status === 401){
-                    window.location.href = '/login'
+                    window.location.href = '/login/'
                 }
             }
         } catch(e){

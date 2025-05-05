@@ -19,7 +19,7 @@ async def get_users(
 ):
     return await crud.get_users(session, offset, count)
 
-@router.post("/register", response_model=UserOut, dependencies=[Depends(check_current_user(True))])
+@router.post("/register/", response_model=UserOut, dependencies=[Depends(check_current_user(True))])
 async def register_user(user_in: UserBase, session: AsyncSession = Depends(db_helper.session_dependency)):
     existing = await crud.get_user_by_username(session, user_in.username)
     if existing:
@@ -27,7 +27,7 @@ async def register_user(user_in: UserBase, session: AsyncSession = Depends(db_he
     return await crud.create_user(session, user_in)
 
 
-@router.post("/login")
+@router.post("/login/")
 async def user_login(creds: UserLogin, response: Response,
                      session: AsyncSession = Depends(db_helper.session_dependency)):
     user = await crud.authenticate_user(session, creds)
@@ -38,7 +38,7 @@ async def user_login(creds: UserLogin, response: Response,
     raise HTTPException(status_code=401, detail="Incorrect username or password")
 
 
-@router.put("/{username}")
+@router.put("/{username}/")
 async def user_delete(
         username: str,
         change_info: UserEdit,
@@ -54,7 +54,7 @@ async def user_delete(
     return {"result": "ok"}
 
 
-@router.delete("/{username}", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(check_current_user(True))])
+@router.delete("/{username}/", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(check_current_user(True))])
 async def user_delete(
         username: str,
         session: AsyncSession = Depends(db_helper.session_dependency)
@@ -64,7 +64,7 @@ async def user_delete(
         raise HTTPException(status_code=404, detail="User not found")
 
 
-@router.post("/change_password", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(check_current_user(True))])
+@router.post("/change_password/", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(check_current_user(True))])
 async def change_password(
         creds: UserChangePassword,
         session: AsyncSession = Depends(db_helper.session_dependency)
@@ -75,7 +75,7 @@ async def change_password(
     return {"result": "ok"}
 
 
-@router.get("/logout")
+@router.get("/logout/")
 async def logout():
     response = RedirectResponse(url="/", status_code=302)
     security.unset_access_cookies(response)

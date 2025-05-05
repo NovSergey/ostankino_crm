@@ -43,12 +43,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async function getData() {
         try {
-            const response = await fetch(`/api/visit_history?offset=${offset}&count=${limit}`);
+            const response = await fetch(`/api/visit_history/?offset=${offset}&count=${limit}`);
             if (response.status === 403){
                 window.location.href = '/';
             }
             else if (response.status === 401){
-                window.location.href = '/login'
+                window.location.href = '/login/'
             }
             const data = await response.json();
             renderTable(data);
@@ -70,7 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
               };
               
             const queryString = new URLSearchParams(params).toString();
-            const response = await fetch(`/api/visit_history/search?${queryString}`);
+            const response = await fetch(`/api/visit_history/search/?${queryString}`);
             if (!response.ok){
                 console.log(full_name);
                 console.error(await response.text());
@@ -78,7 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     window.location.href = '/';
                 }
                 else if (response.status === 401){
-                    window.location.href = '/login'
+                    window.location.href = '/login/'
                 }
             }
             const data = await response.json();
@@ -144,7 +144,7 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
             const response = await fetch("/api/objects/");
             if (response.status === 401){
-                window.location.href = '/login'
+                window.location.href = '/login/'
             }
             const objects = await response.json();
             objects.forEach(object => {

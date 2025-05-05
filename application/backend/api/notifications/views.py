@@ -20,9 +20,16 @@ async def get_notifications(
     return await crud.get_notifications(session, active, offset, count)
 
 
-@router.post("/read/{notification_id}")
-async def get_notifications(
+@router.post("/read/{notification_id}/")
+async def read_notification(
         notification_id: int,
         session: AsyncSession = Depends(db_helper.session_dependency)
 ):
     return await crud.read_notification(session, notification_id)
+
+
+@router.post("/read_all/")
+async def read_all_notification(
+        session: AsyncSession = Depends(db_helper.session_dependency)
+):
+    return await crud.read_all_notification(session)
