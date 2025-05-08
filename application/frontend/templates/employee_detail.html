@@ -60,6 +60,9 @@
                 <button type="button" class="btn restore" id="restore-btn"><i class="fas fa-undo"></i> Восстановить</button>
             {% else %}
                 <button type="button" class="btn danger" id="delete-btn"><i class="fas fa-trash"></i> Удалить</button>
+                <a href="{{ url_for('download_qr', employee_id=employee.id) }}" class="btn info" download>
+                    <i class="fas fa-qrcode"></i> Скачать QR-код
+                </a>
             {% endif %}
         </div>
     </form>
