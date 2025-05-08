@@ -55,7 +55,7 @@ async def create_visit_history(
         return await crud.create_visit_history_out(session=session, entry=entry)
 
 
-@router.get("/search/", response_model=list[VisitHistory])
+@router.get("/search/", response_model=list[VisitHistory], dependencies=[Depends(check_current_user())])
 async def search_history(
         full_name: str = Query(""),
         object_id: int = Query(None),
@@ -80,13 +80,11 @@ async def search_history(
         count=count
     )
 
-@router.get("/active_users/{object_id}/", response_model=VisitHistoryActiveResponse)
+@router.get("/active_users/{object_id}/", response_model=VisitHistoryActiveResponse, dependencies=[Depends(check_current_user())])
 async def get_active_users_in_object(
         object_id: int,
         session: AsyncSession = Depends(db_helper.session_dependency),
 ):
     object = await get_object(session, object_id)
-    if not object:
-        raise HTTPException(status_code=404, detail="Object not found")
     result = await crud.get_active_users(session=session, object_id=object_id)
     return {"object": object, "history": result}

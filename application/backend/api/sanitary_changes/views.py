@@ -10,11 +10,11 @@ from .schemas import SanitaryChangeBase
 from application.backend.api.users.dependencies import check_current_user
 from application.backend.core.models import SanitaryTypeEnum
 
-router = APIRouter(tags=["Sanitary Changes"])
+router = APIRouter(tags=["Sanitary Changes"], dependencies=[Depends(check_current_user())])
 
 
 
-@router.get("/{sanitary_type}/", response_model=list[SanitaryChangeBase], dependencies=[Depends(check_current_user())])
+@router.get("/{sanitary_type}/", response_model=list[SanitaryChangeBase])
 async def get_sanitary_breaks(
         sanitary_type: SanitaryTypeEnum,
         offset: int = Query(0, ge=0),

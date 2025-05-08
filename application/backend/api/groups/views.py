@@ -4,8 +4,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from application.backend.core import db_helper
 from . import crud
 from .schemas import Group
+from ..users.dependencies import check_current_user
 
-router = APIRouter(tags=["Groups"])
+router = APIRouter(tags=["Groups"], dependencies=[Depends(check_current_user())])
 
 
 @router.get("/", response_model=list[Group])

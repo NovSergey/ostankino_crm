@@ -49,7 +49,6 @@ form.addEventListener('submit', async (e) => {
     });
     selects.forEach(input => data[input.name] = input.value == "" ? null : input.value);
     data['phone'] = phoneMask.unmaskedValue;
-    console.log(data);
     try{
         const response = await fetch(`/api/employees/${id}/`, {
             method: 'PUT',

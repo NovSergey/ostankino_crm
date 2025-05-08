@@ -48,8 +48,21 @@
   background-color: #f8d7da;
 }
 
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 1rem 1.5rem;
+  gap: 1rem;
+}
+
 /* Медиа-запрос для смартфонов */
 @media (max-width: 600px) {
+  .header {
+      flex-direction: column;
+      align-items: flex-start;
+  }
   .object-card {
       padding: 16px;
       font-size: 0.9rem;
@@ -62,4 +75,31 @@
   .status {
       font-size: 0.8rem;
   }
+  .add-object-btn {
+    font-size: 0.9rem;
+    padding: 10px 20px;
+  }
 }
+
+.add-object-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  text-decoration: none;
+}
+
+.add-object-btn:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+}
+
+.add-object-btn:active {
+  background-color: #004085;
+}
+

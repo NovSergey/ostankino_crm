@@ -13,10 +13,10 @@ from . import crud
 from .dependencies import employee_by_id, employee_search, get_scan_employee_info
 from .schemas import Employee, EmployeeCreate, EmployeeUpdate
 
-router = APIRouter(tags=["Employees"], dependencies=[Depends(check_current_user())])
+router = APIRouter(tags=["Employees"])
 
 
-@router.get("/", response_model=list[Employee])
+@router.get("/", response_model=list[Employee], dependencies=[Depends(check_current_user())])
 async def get_employees(
         offset: int = Query(0, ge=0),
         count: int = Query(100, le=100),
@@ -25,7 +25,7 @@ async def get_employees(
     return await crud.get_employees(session, offset, count)
 
 
-@router.post("/", response_model=Employee, status_code=status.HTTP_201_CREATED)
+@router.post("/", response_model=Employee, status_code=status.HTTP_201_CREATED, dependencies=[Depends(check_current_user())])
 async def create_employee(
         employee_in: EmployeeCreate,
         background_tasks: BackgroundTasks,
@@ -59,7 +59,7 @@ async def get_employee_scan_info(
     return await get_scan_employee_info(session, employee, scanned_user)
 
 
-@router.get("/search/", response_model=list[Employee])
+@router.get("/search/", response_model=list[Employee], dependencies=[Depends(check_current_user())])
 async def search_employees(
         full_name: str = Query(""),
         phone: str = Query(""),
@@ -80,7 +80,7 @@ async def search_employees(
     )
 
 
-@router.post("/restore/{employee_id}/")
+@router.post("/restore/{employee_id}/", dependencies=[Depends(check_current_user())])
 async def restore_employee(
         employee: Employee = Depends(employee_by_id),
         session: AsyncSession = Depends(db_helper.session_dependency),
@@ -88,12 +88,12 @@ async def restore_employee(
     await crud.restore_employee(session=session, employee=employee)
 
 
-@router.get("/{employee_id}/", response_model=Employee)
+@router.get("/{employee_id}/", response_model=Employee, dependencies=[Depends(check_current_user())])
 async def get_employee(employee: Employee = Depends(employee_by_id)):
     return employee
 
 
-@router.put("/{employee_id}/", response_model=Employee)
+@router.put("/{employee_id}/", response_model=Employee, dependencies=[Depends(check_current_user())])
 async def update_employee(
         employee_update: EmployeeUpdate,
         employee: Employee = Depends(employee_by_id),
@@ -106,7 +106,7 @@ async def update_employee(
     )
 
 
-@router.delete("/{employee_id}/", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{employee_id}/", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(check_current_user())])
 async def delete_employee(
         background_tasks: BackgroundTasks,
         employee: Employee = Depends(employee_by_id),

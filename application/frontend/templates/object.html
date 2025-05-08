@@ -11,7 +11,12 @@
 <div class="object-details">
     <div class="object-header">
         <h2 id="object-title" class="object-title"></h2>
-        <span class="status" id="object-status"></span>
+        <div>
+            {% if user.is_superuser %}
+            <a class="btn primary" href="/objects/edit/{{object_id}}">Редактировать</a>
+            {% endif %}
+            <span class="status" id="object-status"></span>
+        </div>
     </div>
 
     <details class="table-section">

@@ -11,4 +11,5 @@ class Object(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True, unique=True)
     name: Mapped[str] = mapped_column(String, unique=True, nullable=False)
-    status: Mapped[ObjectStatusEnum] = mapped_column(PgEnum(ObjectStatusEnum, name="object_status_enum"), nullable=False)
+    status: Mapped[ObjectStatusEnum] = mapped_column(PgEnum(ObjectStatusEnum, name="object_status_enum"),
+                                                     server_default="open", nullable=False)

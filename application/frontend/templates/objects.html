@@ -7,8 +7,14 @@
 {% endblock %}
 
 {% block content %}
+<div class="header">
     <h2 class="title">Объекты</h2>
-    <div id="objects-container"></div>
+    {% if user.is_superuser %}
+    <a class="add-object-btn" href="/objects/add/">Добавить объект</a>
+    {% endif %}
+</div>
+
+<div id="objects-container"></div>
 {% endblock %}
 
 {% block scripts %}

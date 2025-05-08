@@ -39,7 +39,7 @@ async def user_login(creds: UserLogin, response: Response,
 
 
 @router.put("/{username}/")
-async def user_delete(
+async def user_update(
         username: str,
         change_info: UserEdit,
         session: AsyncSession = Depends(db_helper.session_dependency),
@@ -64,11 +64,14 @@ async def user_delete(
         raise HTTPException(status_code=404, detail="User not found")
 
 
-@router.post("/change_password/", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(check_current_user(True))])
+@router.post("/change_password/")
 async def change_password(
         creds: UserChangePassword,
-        session: AsyncSession = Depends(db_helper.session_dependency)
+        session: AsyncSession = Depends(db_helper.session_dependency),
+        user_jwt: User = Depends(check_current_user())
 ):
+    if user_jwt.username != creds.username:
+        raise HTTPException(status_code=403, detail="Access denied")
     user = await crud.change_password_user(session, creds)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")

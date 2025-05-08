@@ -7,6 +7,16 @@ class ObjectBase(BaseModel):
     name: str
     status: ObjectStatusEnum
 
+
+class ObjectCreate(BaseModel):
+    name: str
+
+
+class ObjectUpdate(BaseModel):
+    name: str | None = None
+    status: ObjectStatusEnum | None = None
+
+
 class Object(ObjectBase):
     id: int
     model_config = ConfigDict(from_attributes=True)
