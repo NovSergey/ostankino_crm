@@ -99,6 +99,9 @@ a {
       width: 100%;
       justify-content: center;
   }
+  a.btn {
+    width: auto; /* переопределяем */
+  }
 }
 .btn.secondary {
   background: #f0ad4e;
