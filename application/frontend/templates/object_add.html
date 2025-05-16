@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Добавление объекта - CRM Пропусков{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', path='/employee_detail/style.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="employee-card">
+    <h2 class="title">Информация о объекта</h2>
+    <form id="employee-form" class="employee-form">
+        <div class="form-group">
+            <label for="name">Название:</label>
+            <input type="text" id="name" name="name" required>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn success" id="save-btn"><i class="fas fa-save"></i> Сохранить</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', path='/object_add/script.js') }}"></script>
+{% endblock %}

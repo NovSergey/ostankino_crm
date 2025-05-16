@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Response, Depends, status, Query
+from fastapi import APIRouter, HTTPException, Response, Depends, status, Query, Request
 from fastapi.responses import RedirectResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -8,6 +8,7 @@ from . import crud
 from .dependencies import check_current_user
 from .schemas import UserOut, UserBase, UserLogin, UserEdit, UserChangePassword
 from application.backend.core.config import security
+from ...utils.limiter import limiter
 
 router = APIRouter(tags=["Users"])
 
@@ -28,13 +29,15 @@ async def register_user(user_in: UserBase, session: AsyncSession = Depends(db_he
 
 
 @router.post("/login/")
-async def user_login(creds: UserLogin, response: Response,
+@limiter.limit("5/10minute")
+async def user_login(request: Request, creds: UserLogin, response: Response,
                      session: AsyncSession = Depends(db_helper.session_dependency)):
     user = await crud.authenticate_user(session, creds)
     if user:
         token = security.create_access_token(uid=str(user.username))
         security.set_access_cookies(token, response)
         return "ok"
+
     raise HTTPException(status_code=401, detail="Incorrect username or password")
 
 

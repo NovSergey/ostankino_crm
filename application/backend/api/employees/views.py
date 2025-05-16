@@ -10,8 +10,8 @@ from application.backend.api.users.dependencies import check_current_user
 from application.backend.utils.notification_utils import create_notification
 
 from . import crud
-from .dependencies import employee_by_id, employee_search, get_scan_employee_info
-from .schemas import Employee, EmployeeCreate, EmployeeUpdate
+from .dependencies import employee_by_id, employee_search, get_scan_employee_info, get_security_by_id
+from .schemas import Employee, EmployeeCreate, EmployeeUpdate, EmployeePhone
 
 router = APIRouter(tags=["Employees"])
 
@@ -25,13 +25,14 @@ async def get_employees(
     return await crud.get_employees(session, offset, count)
 
 
-@router.post("/", response_model=Employee, status_code=status.HTTP_201_CREATED, dependencies=[Depends(check_current_user())])
+@router.post("/", response_model=Employee, status_code=status.HTTP_201_CREATED,
+             dependencies=[Depends(check_current_user())])
 async def create_employee(
         employee_in: EmployeeCreate,
         background_tasks: BackgroundTasks,
         session: AsyncSession = Depends(db_helper.session_dependency),
 ):
-    employee_new =  await crud.create_employee(session=session, employee=employee_in)
+    employee_new = await crud.create_employee(session=session, employee=employee_in)
     background_tasks.add_task(
         create_notification,
         session=session,
@@ -39,6 +40,14 @@ async def create_employee(
         message=f"Добавлен сотрудник: {employee_new.full_name} | {employee_new.phone}"
     )
     return employee_new
+
+
+@router.get("/get_security_by_phone", response_model=Employee | None)
+async def get_security_by_phone(
+        phone: str,
+        session: AsyncSession = Depends(db_helper.session_dependency)
+):
+    return await get_security_by_id(phone, session)
 
 
 @router.get("/scan_info/", response_model=EmployeeScanResult)

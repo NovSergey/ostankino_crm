@@ -42,7 +42,6 @@ async def create_user(session: AsyncSession, user: UserBase) -> User:
 async def authenticate_user(session: AsyncSession, user: UserBase) -> User | None:
     user_exist = await get_user_by_username(session, user.username)
     if user_exist and user_exist.check_password(user.password) and user_exist.is_active:
-        print("good")
         return user_exist
     return None
 

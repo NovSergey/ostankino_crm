@@ -5,10 +5,14 @@ from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from authx.exceptions import AuthXException
 import uvicorn
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from slowapi.middleware import SlowAPIMiddleware
 from starlette import status
 
 from application.backend.api import router as router_backend
 from application.backend.api.exceptions import RedirectException
+from application.backend.utils.limiter import limiter
 from application.backend.utils.notification_utils import check_unfinished_visits_and_notify
 from application.frontend.routers import router as router_frontend
 from application.frontend.config import settings as settings_frontend
@@ -25,6 +29,9 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(lifespan=lifespan)
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+app.add_middleware(SlowAPIMiddleware)
 app.include_router(router=router_backend, prefix="/api")
 app.include_router(router=router_frontend)
 

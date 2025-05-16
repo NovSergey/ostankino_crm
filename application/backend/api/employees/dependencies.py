@@ -7,7 +7,7 @@ from sqlalchemy import select, desc
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from application.backend.core.models import Employee
+from application.backend.core.models import Employee, RoleEnum
 from application.backend.core import db_helper
 from application.backend.api.general_schemas.employee import EmployeeScanResult
 from application.backend.api.visit_history.schemas import VisitHistoryLast
@@ -116,3 +116,16 @@ async def get_scan_employee_info_by_id(employee_id: uuid.UUID, scanned_by_user_i
         )
 
     return await get_scan_employee_info(session, employee, scanned_user)
+
+
+async def get_security_by_id(
+        employee_phone: str,
+        session: AsyncSession = Depends(db_helper.session_dependency),
+) -> Employee | None:
+    stmt = select(Employee).options(
+        selectinload(Employee.group),
+        selectinload(Employee.object)
+    ).where(Employee.phone == employee_phone, Employee.role == RoleEnum.security)
+    result = await session.execute(stmt)
+    employee: Employee = result.scalar_one_or_none()
+    return employee

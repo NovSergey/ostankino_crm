@@ -18,7 +18,7 @@ class Employee(Base):
     __tablename__ = "employees"
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
     full_name: Mapped[str] = mapped_column(String(100), nullable=False)
-    phone: Mapped[str] = mapped_column(nullable=False) # сделать уникальным
+    phone: Mapped[str] = mapped_column(nullable=False, unique=True) # сделать уникальным
     role: Mapped[RoleEnum] = mapped_column(PgEnum(RoleEnum, name="role_enum"), nullable=False)
 
     object_id: Mapped[int | None] = mapped_column(ForeignKey("objects.id"), nullable=True)

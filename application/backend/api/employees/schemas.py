@@ -23,6 +23,7 @@ class EmployeeBase(BaseModel):
             "label": sanitary.label
         }
 
+
 class EmployeeCreate(EmployeeBase):
     pass
 
@@ -33,8 +34,10 @@ class EmployeeUpdate(EmployeeCreate):
     role: RoleEnum | None = None
     sanitary_table: SanitaryTypeEnum | None = None
 
+
 class EmployeeFullBase(EmployeeBase):
     id: uuid.UUID
+
 
 class Employee(CustomBaseModel):
     id: uuid.UUID
@@ -53,3 +56,7 @@ class Employee(CustomBaseModel):
             "value": sanitary.value,
             "label": sanitary.label
         }
+
+
+class EmployeePhone(BaseModel):
+    phone: str
