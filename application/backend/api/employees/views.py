@@ -32,6 +32,12 @@ async def create_employee(
         background_tasks: BackgroundTasks,
         session: AsyncSession = Depends(db_helper.session_dependency),
 ):
+    check_employee = await employee_search(phone=employee_in.phone, session=session)
+    if check_employee:
+        raise HTTPException(
+            status_code=409,
+            detail=f"Employee with phone {employee_in.phone} already exists"
+        )
     employee_new = await crud.create_employee(session=session, employee=employee_in)
     background_tasks.add_task(
         create_notification,

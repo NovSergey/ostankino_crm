@@ -34,10 +34,9 @@ form.addEventListener('submit', async (e) => {
         }
         else{
             alert('Работник добавлен');
+            form.reset();
         }
     } catch(e){
         console.log("Error: ", e)
     }
-    
-    window.location.reload();
 });

@@ -31,11 +31,11 @@ async def employee_by_id(
     )
 
 async def employee_search(
-        full_name: str | None,
-        phone: str | None,
-        group_id: int | None,
-        object_id: int | None,
         session: AsyncSession,
+        full_name: str | None = None,
+        phone: str | None = None,
+        group_id: int | None = None,
+        object_id: int | None = None,
         offset: int = 0,
         count: int = 100
 ) -> list[Employee]:
