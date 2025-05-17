@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from application.backend.api.visit_history.schemas import VisitHistoryCreate
-from application.backend.core.models import VisitHistory, Employee
+from application.backend.core.models import VisitHistory, Employee, RoleEnum
 
 
 async def get_visit_history(session: AsyncSession, offset: int = 0, count: int = 100) -> list[VisitHistory]:
@@ -31,14 +31,20 @@ async def get_visit_history(session: AsyncSession, offset: int = 0, count: int =
 
 async def create_visit_history_in(session: AsyncSession, entry: VisitHistoryCreate) -> VisitHistory:
     entry_created = VisitHistory(**entry.model_dump())
-    scanned_user = await session.get(Employee, entry_created.scanned_by_user_id)
-    if not scanned_user:
+    scanned_by_user = await session.get(Employee, entry_created.scanned_by_user_id)
+    if not scanned_by_user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Employee {entry_created.scanned_by_user_id} not found!",
         )
 
-    entry_created.object_id = scanned_user.object_id
+    if scanned_by_user.object_id is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Security {entry.scanned_by_user_id} is not assigned to the object!",
+        )
+
+    entry_created.object_id = scanned_by_user.object_id
     session.add(entry_created)
     await session.commit()
 
@@ -59,11 +65,16 @@ async def create_visit_history_in(session: AsyncSession, entry: VisitHistoryCrea
 
 
 async def create_visit_history_out(session: AsyncSession, entry: VisitHistoryCreate) -> VisitHistory:
-    scanned_user = await session.get(Employee, entry.scanned_by_user_id)
-    if not scanned_user:
+    scanned_by_user = await session.get(Employee, entry.scanned_by_user_id)
+    if not scanned_by_user or scanned_by_user.role != RoleEnum.security:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Employee {entry.scanned_by_user_id} not found!",
+            detail=f"Security {entry.scanned_by_user_id} not found!",
+        )
+    if scanned_by_user.object_id is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Security {entry.scanned_by_user_id} is not assigned to the object!",
         )
     result = await session.execute(
         select(VisitHistory)
@@ -78,18 +89,14 @@ async def create_visit_history_out(session: AsyncSession, entry: VisitHistoryCre
         )
         .where(
             VisitHistory.employee_id == entry.employee_id,
-            VisitHistory.scanned_by_user_id == entry.scanned_by_user_id,
+            VisitHistory.object_id == scanned_by_user.object_id,
+            VisitHistory.exit_time == None,
         )
         .order_by(desc(VisitHistory.entry_time))
         .limit(1)
     )
     visit_his = result.scalar_one_or_none()
     if not visit_his:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Not found visit history",
-        )
-    if visit_his.exit_time:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Not found visit history",
