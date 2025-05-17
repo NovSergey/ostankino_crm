@@ -11,4 +11,4 @@ class Notification(Base):
     title: Mapped[str] = mapped_column(String(255), nullable=False)
     message: Mapped[str] = mapped_column(Text, nullable=False)
     time: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
-    is_read: Mapped[bool] = mapped_column(default=False, nullable=False)
+    is_read: Mapped[bool] = mapped_column(server_default="false", nullable=False)

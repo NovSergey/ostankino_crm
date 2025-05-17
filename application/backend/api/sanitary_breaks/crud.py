@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from fastapi import HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.engine import Result
@@ -16,7 +18,8 @@ async def update_get_sanitary_breaks(
         session: AsyncSession,
         sanitary_break: SanitaryBreakBase,
         sanitary_type: SanitaryTypeEnum,
-        user_id: int
+        user_id: int,
+        time_changed: datetime
 ):
     stmt = select(SanitaryBreak).where(
         SanitaryBreak.sanitary_type == sanitary_type,
@@ -61,6 +64,7 @@ async def update_get_sanitary_breaks(
         time_from=old_time,
         time_to=sanitary_update.time_break,
         user_id=user_id,
+        time_changed=time_changed
     )
 
     session.add(sanitary_change)

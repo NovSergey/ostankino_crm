@@ -23,7 +23,7 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 1rem 2rem;
-    max-width: 1200px;
+    max-width: 1500px;
     margin: 0 auto;
 }
 
@@ -168,7 +168,7 @@ body {
 
 .container {
     width: 90%;
-    max-width: 1200px;
+    max-width: 1500px;
     margin: 20px auto;
     background: white;
     padding: 1rem;

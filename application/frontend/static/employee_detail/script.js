@@ -19,11 +19,13 @@ function changeActive(active){
     selects.forEach(select => select.disabled = active);
     if(active){
         editBtn.classList.remove('hidden');
+        deleteBtn.classList.remove('hidden');
         saveBtn.classList.add('hidden');
         cancelBtn.classList.add('hidden');
     }
     else{
         editBtn.classList.add('hidden');
+        deleteBtn.classList.add('hidden');
         saveBtn.classList.remove('hidden');
         cancelBtn.classList.remove('hidden');
     }

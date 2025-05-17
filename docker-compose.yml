@@ -1,3 +1,5 @@
+version: "3.9"
+
 services:
   db:
     image: postgres
@@ -8,3 +10,24 @@ services:
       POSTGRES_PASSWORD: admin
     ports:
       - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  web:
+    build: .
+    restart: always
+    depends_on:
+      - db
+    environment:
+      DB_URL: postgresql+asyncpg://admin:admin@db:5432/crm
+      AUTHX_SECRET_KEY: superlocalkey
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/app
+    working_dir: /app
+
+volumes:
+  postgres_data:
+    external: true
+    name: ostankino_crm_postgres_data

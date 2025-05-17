@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -11,13 +13,13 @@ from application.backend.utils.notification_utils import create_notification
 router = APIRouter(tags=["Sanitary Breaks"])
 
 
-
 @router.get("/{sanitary_type}/", response_model=list[SanitaryBreakBase], dependencies=[Depends(check_current_user())])
 async def get_sanitary_breaks(
         sanitary_type: SanitaryTypeEnum,
         session: AsyncSession = Depends(db_helper.session_dependency),
 ):
     return await crud.get_sanitary_breaks(session=session, sanitary_type=sanitary_type)
+
 
 @router.put("/{sanitary_type}/")
 async def update_sanitary_breaks(
@@ -27,11 +29,14 @@ async def update_sanitary_breaks(
         session: AsyncSession = Depends(db_helper.session_dependency),
         user_jwt: User = Depends(check_current_user())
 ):
+    time_changed = datetime.now()
     for sanitary_break in sanitary_breaks:
         if sanitary_break.object_to_id == sanitary_break.object_from_id:
             raise HTTPException(status_code=404, detail="Cannot save object_from_id equal to object_to_id")
     for sanitary_break in sanitary_breaks:
-        await crud.update_get_sanitary_breaks(session=session, sanitary_break=sanitary_break, sanitary_type=sanitary_type, user_id=user_jwt.id)
+        await crud.update_get_sanitary_breaks(session=session, sanitary_break=sanitary_break,
+                                              sanitary_type=sanitary_type, user_id=user_jwt.id,
+                                              time_changed=time_changed)
 
     background_tasks.add_task(
         create_notification,

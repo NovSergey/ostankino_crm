@@ -12,8 +12,8 @@ class User(Base):
     phone: Mapped[str] = mapped_column(String, unique=True, nullable=False)
     full_name: Mapped[str] = mapped_column(String, nullable=False)
     hashed_password: Mapped[str] = mapped_column(String, nullable=False)
-    is_active: Mapped[bool] = mapped_column(default=True, nullable=False)
-    is_superuser: Mapped[bool] = mapped_column(default=False, nullable=False)
+    is_active: Mapped[bool] = mapped_column(server_default="true", nullable=False)
+    is_superuser: Mapped[bool] = mapped_column(server_default="false", nullable=False)
 
     def set_password(self, password):
         self.hashed_password = generate_password_hash(password)

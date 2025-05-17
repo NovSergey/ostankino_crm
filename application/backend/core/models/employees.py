@@ -30,4 +30,4 @@ class Employee(Base):
     sanitary_table: Mapped[SanitaryTypeEnum] = mapped_column(PgEnum(SanitaryTypeEnum, name="sanitary_type_enum"),
                                                             nullable=False, server_default="main")
 
-    is_deleted: Mapped[bool] = mapped_column(nullable=False, default=False)
+    is_deleted: Mapped[bool] = mapped_column(nullable=False, server_default="false")
