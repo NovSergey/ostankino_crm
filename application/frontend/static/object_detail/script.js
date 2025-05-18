@@ -5,6 +5,10 @@ const form = document.getElementById('employee-form');
 const inputs = form.querySelectorAll('input');
 const selects = form.querySelectorAll('select');
 
+const restoreBtn = document.getElementById('restore-btn');
+const deleteBtn = document.getElementById('delete-btn');
+
+
 function changeActive(active){
     inputs.forEach(input => input.disabled = active);
     selects.forEach(select => select.disabled = active);
@@ -63,3 +67,47 @@ form.addEventListener('submit', async (e) => {
     
     window.location.reload();
 });
+
+if(deleteBtn){
+    deleteBtn.addEventListener('click', async () => {
+        try{
+            const response = await fetch(`/api/objects/${CURRENT_OBJECT}/`, {
+                method: 'DELETE',
+            });
+            if(!response.ok){
+                if (response.status === 403){
+                    window.location.href = '/';
+                }
+                else if (response.status === 401){
+                    window.location.href = '/login/'
+                }
+            }
+        } catch(e){
+            console.log("Error: ", e)
+        }
+        alert('Объект удалён');
+        window.location.reload();
+    });
+}
+
+if(restoreBtn){
+    restoreBtn.addEventListener('click', async () => {
+        try{
+            const response = await fetch(`/api/objects/restore/${CURRENT_OBJECT}/`, {
+                method: 'POST',
+            });
+            if(!response.ok){
+                if (response.status === 403){
+                    window.location.href = '/';
+                }
+                else if (response.status === 401){
+                    window.location.href = '/login/'
+                }
+            }
+        } catch(e){
+            console.log("Error: ", e)
+        }
+        alert('Объект восстановлен');
+        window.location.reload();
+    });
+}

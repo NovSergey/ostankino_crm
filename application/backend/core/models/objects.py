@@ -13,3 +13,4 @@ class Object(Base):
     name: Mapped[str] = mapped_column(String, unique=True, nullable=False)
     status: Mapped[ObjectStatusEnum] = mapped_column(PgEnum(ObjectStatusEnum, name="object_status_enum"),
                                                      server_default="open", nullable=False)
+    is_deleted: Mapped[bool] = mapped_column(nullable=False, server_default="false")

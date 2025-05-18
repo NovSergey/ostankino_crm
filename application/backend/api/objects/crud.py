@@ -8,7 +8,7 @@ from application.backend.core.models import Object
 
 
 async def get_objects(session: AsyncSession) -> list[Object]:
-    stmt = select(Object).order_by(Object.id)
+    stmt = select(Object).where(Object.is_deleted == False).order_by(Object.id)
     result: Result = await session.execute(stmt)
     return list(result.scalars().all())
 
@@ -40,3 +40,17 @@ async def update_object(session: AsyncSession, object_in: ObjectUpdate, object_i
 
     await session.commit()
     return old_object
+
+
+async def delete_object(session: AsyncSession, object_id: int) -> Object:
+    current_object = await get_object(session, object_id)
+    current_object.is_deleted = True
+    await session.commit()
+    return current_object
+
+
+async def restore_object(session: AsyncSession, object_id: int) -> Object:
+    current_object = await get_object(session, object_id)
+    current_object.is_deleted = False
+    await session.commit()
+    return current_object

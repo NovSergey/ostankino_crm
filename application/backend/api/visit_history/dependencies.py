@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime, time
 
-from sqlalchemy import select, desc, Result
+from sqlalchemy import select, desc, Result, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -59,3 +59,18 @@ async def get_last_visit_by_id(employee_id: uuid.UUID, session: AsyncSession) ->
     )
     result: Result = await session.execute(stmt)
     return result.scalar_one_or_none()
+
+
+async def get_count_visits(session: AsyncSession) -> int:
+    now = datetime.now()
+    start_of_day = datetime.combine(now.date(), time.min)
+    end_of_day = datetime.combine(now.date(), time.max)
+    print(start_of_day, end_of_day)
+    stmt = select(func.count()).where(
+        VisitHistory.entry_time >= start_of_day,
+        VisitHistory.entry_time <= end_of_day
+    )
+
+    result = await session.execute(stmt)
+    count = result.scalar_one()
+    return count

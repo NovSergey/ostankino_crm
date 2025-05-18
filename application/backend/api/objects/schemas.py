@@ -6,6 +6,7 @@ from application.backend.core.models import ObjectStatusEnum
 class ObjectBase(BaseModel):
     name: str
     status: ObjectStatusEnum
+    is_deleted: bool
     model_config = ConfigDict(from_attributes=True)
 
 

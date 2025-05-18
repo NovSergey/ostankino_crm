@@ -3,7 +3,7 @@ from datetime import datetime, timedelta, timezone
 from typing import Annotated
 
 from fastapi import Path, Depends, HTTPException, status
-from sqlalchemy import select, desc
+from sqlalchemy import select, desc, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -129,3 +129,10 @@ async def get_security_by_id(
     result = await session.execute(stmt)
     employee: Employee = result.scalar_one_or_none()
     return employee
+
+
+async def get_count_active_employees(session: AsyncSession) -> int:
+    stmt = select(func.count()).where(Employee.is_deleted == False)
+    result = await session.execute(stmt)
+    count = result.scalar_one()
+    return count

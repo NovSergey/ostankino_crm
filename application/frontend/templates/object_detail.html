@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Работник - CRM Пропусков{% endblock %}
+{% block title %}Объект - CRM Пропусков{% endblock %}
 
 {% block head %}
 <link rel="stylesheet" href="{{ url_for('static', path='/employee_detail/style.css') }}">
@@ -25,6 +25,11 @@
             <button type="button" class="btn primary" id="edit-btn"><i class="fas fa-pen"></i> Редактировать</button>
             <button type="submit" class="btn success hidden" id="save-btn"><i class="fas fa-save"></i> Сохранить</button>
             <button type="button" class="btn secondary hidden" id="cancel-btn"><i class="fas fa-times"></i> Отменить</button>
+            {% if object.is_deleted %}
+                <button type="button" class="btn restore" id="restore-btn"><i class="fas fa-undo"></i> Восстановить</button>
+            {% else %}
+                <button type="button" class="btn danger" id="delete-btn"><i class="fas fa-trash"></i> Удалить</button>
+            {% endif %}
         </div>
     </form>
 </div>
