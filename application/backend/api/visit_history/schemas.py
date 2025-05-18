@@ -48,3 +48,8 @@ class VisitHistoryLast(CustomBaseModel):
     exit_time: datetime | None
     object: ObjectBase
     scanned_by_user: Employee
+
+class VisitHistoryCreateResponse(BaseModel):
+    status: str
+    result: VisitHistory | None
+    error: str | None
