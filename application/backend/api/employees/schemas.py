@@ -60,3 +60,8 @@ class Employee(CustomBaseModel):
 
 class EmployeePhone(BaseModel):
     phone: str
+
+
+class EmployeeScanRequest(BaseModel):
+    employee_id: uuid.UUID
+    scanned_by_user_id: uuid.UUID

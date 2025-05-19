@@ -11,7 +11,7 @@ from application.backend.utils.notification_utils import create_notification
 
 from . import crud
 from .dependencies import employee_by_id, employee_search, get_scan_employee_info, get_security_by_id
-from .schemas import Employee, EmployeeCreate, EmployeeUpdate, EmployeePhone
+from .schemas import Employee, EmployeeCreate, EmployeeUpdate, EmployeePhone, EmployeeScanRequest
 
 router = APIRouter(tags=["Employees"])
 
@@ -48,27 +48,26 @@ async def create_employee(
     return employee_new
 
 
-@router.get("/get_security_by_phone", response_model=Employee | None)
+@router.post("/get_security_by_phone", response_model=Employee | None)
 async def get_security_by_phone(
-        phone: str,
+        employee_in: EmployeePhone,
         session: AsyncSession = Depends(db_helper.session_dependency)
 ):
-    return await get_security_by_id(phone, session)
+    return await get_security_by_id(employee_in.phone, session)
 
 
-@router.get("/scan_info/", response_model=EmployeeScanResult)
+@router.post("/scan_info/", response_model=EmployeeScanResult)
 async def get_employee_scan_info(
-        employee_id: uuid.UUID,
-        scanned_by_user_id: uuid.UUID,
+        scan_info: EmployeeScanRequest,
         session: AsyncSession = Depends(db_helper.session_dependency),
 ):
-    employee = await crud.get_employee(session, employee_id)
-    scanned_user = await crud.get_employee(session, scanned_by_user_id)
+    employee = await crud.get_employee(session, scan_info.employee_id)
+    scanned_user = await crud.get_employee(session, scan_info.scanned_by_user_id)
 
     if employee is None or scanned_user is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Product {employee_id} not found!",
+            detail=f"Employee {scan_info.employee_id} not found!",
         )
 
     return await get_scan_employee_info(session, employee, scanned_user)

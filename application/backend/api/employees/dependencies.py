@@ -27,7 +27,7 @@ async def employee_by_id(
 
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND,
-        detail=f"Product {employee_id} not found!",
+        detail=f"Employee {employee_id} not found!",
     )
 
 async def employee_search(
