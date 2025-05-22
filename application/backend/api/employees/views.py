@@ -48,7 +48,7 @@ async def create_employee(
     return employee_new
 
 
-@router.post("/get_security_by_phone", response_model=Employee | None)
+@router.post("/get_security_by_phone/", response_model=Employee | None)
 async def get_security_by_phone(
         employee_in: EmployeePhone,
         session: AsyncSession = Depends(db_helper.session_dependency)

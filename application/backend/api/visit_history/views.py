@@ -50,7 +50,7 @@ async def create_visit_history(
 
     if action == "in":
         scan_res = await get_scan_employee_info_by_id(entry.employee_id, entry.scanned_by_user_id, session)
-        if not scan_res.can_visit:
+        if scan_res.time_to_visit is not None:
             background_tasks.add_task(
                 create_notification,
                 session=session,
